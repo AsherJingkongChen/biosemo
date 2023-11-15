@@ -1,0 +1,67 @@
+no stress:
+  the subjects are allowed to work on the tasks as long as they needed for a maximum
+  of 45 minutes but they are not aware of the maximum duration of their tasks.
+time pressure: 
+  during this time, the time to finish the task was reduced to 2/3 of 
+  the time the participant took in the neutral condition.
+interruption:
+  the participants received eight emails in the middle of their assigned tasks.
+  Some emails were relevant to their tasks and the participant 
+  was requested to take specific actions while others were 
+  just irrelevant to their tasks.
+無壓力：
+   讓受試者在最大需要的時間內完成任務
+   45 分鐘，但他們不知道任務的最長持續時間。
+時間壓力：
+   在此期間，完成任務的時間減少到了2/3
+   參與者在中性條件下花費的時間。
+中斷：
+   參與者在分配任務的過程中收到了八封電子郵件。
+   一些電子郵件與他們的任務和參與者相關
+   被要求採取具體行動，而其他行動則
+   只是與他們的任務無關。
+
+Based on the provided information, here is the interpretation 
+of the 35 feature names in a bio dataset:
+
+1. MEAN_RR: Mean of RR intervals (measured in milliseconds).
+2. MEDIAN_RR: Median of RR intervals.
+3. SDRR: Standard deviation of RR intervals.
+4. RMSSD: Root mean square of the differences between successive RR intervals.
+5. SDSD: Standard deviation of successive RR interval differences.
+6. SDRR_RMSSD: Ratio of the standard deviation of RR intervals to the root mean square of the differences between successive RR intervals.
+7. HR: Heart rate (measured in beats per minute).
+8. pNN25: Percentage of successive RR intervals that differ by more than 25 milliseconds.
+9. pNN50: Percentage of successive RR intervals that differ by more than 50 milliseconds.
+10. SD1: Standard deviation of RR intervals in the perpendicular direction to the line of identity in the Poincaré plot.
+11. SD2: Standard deviation of RR intervals in the direction of the line of identity in the Poincaré plot.
+12. KURT: Kurtosis of the distribution of RR intervals.
+13. SKEW: Skewness of the distribution of RR intervals.
+14. MEAN_REL_RR: Mean of relative RR intervals.
+15. MEDIAN_REL_RR: Median of relative RR intervals.
+16. SDRR_REL_RR: Standard deviation of relative RR intervals.
+17. RMSSD_REL_RR: Root mean square of the differences between successive relative RR intervals.
+18. SDSD_REL_RR: Standard deviation of successive relative RR interval differences.
+19. SDRR_RMSSD_REL_RR: Ratio of the standard deviation of relative RR intervals to the root mean square of the differences between successive relative RR intervals.
+20. KURT_REL_RR: Kurtosis of the distribution of relative RR intervals.
+21. SKEW_REL_RR: Skewness of the distribution of relative RR intervals.
+22. VLF: Power in the very low-frequency range.
+23. VLF_PCT: Percentage of power in the very low-frequency range.
+24. LF: Power in the low-frequency range.
+25. LF_PCT: Percentage of power in the low-frequency range.
+26. LF_NU: Normalized units of power in the low-frequency range.
+27. HF: Power in the high-frequency range.
+28. HF_PCT: Percentage of power in the high-frequency range.
+29. HF_NU: Normalized units of power in the high-frequency range.
+30. TP: Total power.
+31. LF_HF: Ratio of power in the low-frequency range to power in the high-frequency range.
+32. HF_LF: Ratio of power in the high-frequency range to power in the low-frequency range.
+33. sampen: Sample entropy.
+34. higuci: Higuchi fractal dimension.
+35. datasetId: Identifier for the dataset.
+36. condition: The condition or label associated with the data sample.
+
+These features represent various statistical, frequency domain, 
+and non-linear measures derived from heart rate variability (HRV) data, 
+which is often used to assess the autonomic nervous system's 
+activity and cardiovascular health.

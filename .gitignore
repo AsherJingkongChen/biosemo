@@ -1,0 +1,9 @@
+.idea
+
+logs.log
+
+/datasets/swell/quick_start.py
+/datasets/swell/papers
+/datasets/swell/data/raw
+/datasets/swell/data/final/*.csv
+/datasets/ecg-spider-clip
