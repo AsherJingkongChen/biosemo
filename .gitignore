@@ -1,6 +1,6 @@
 .idea
 
-logs.log
+/notebooks/logs.log
 
 /datasets/swell/quick_start.py
 /datasets/swell/data/raw
