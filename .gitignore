@@ -1,8 +1,11 @@
 .idea
+.DS_Store
+
+__pycache__
 
 /notebooks/logs.log
 
 /datasets/swell/quick_start.py
-/datasets/swell/data/raw
 /datasets/swell/data/final/*.csv
+/datasets/swell/data/raw
 /datasets/ecg-spider-clip
