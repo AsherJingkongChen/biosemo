@@ -1,11 +1,11 @@
 .idea
 .DS_Store
 
+*.swp
+
 __pycache__
 
-/notebooks/logs.log
-
-/datasets/swell/quick_start.py
-/datasets/swell/data/final/*.csv
-/datasets/swell/data/raw
+/datasets/swell/final/*.csv
+/datasets/swell/raw
 /datasets/ecg-spider-clip
+/notebooks/logs.log
