@@ -1,119 +1,74 @@
 # define the feature extraction method
-from numpy import ndarray
-from pandas import DataFrame
+from numpy.typing import NDArray
+from pandas._typing import ArrayLike
 from typing import Iterable
 
-def extract_hrv_features_from_rri(
-  rr: Iterable[float],
-  fs = 4,
-  ws = 300,
-) -> DataFrame:
+def get_window_iterator(
+  values: ArrayLike,
+  window_size: int,
+) -> Iterable[ArrayLike]:
   '''
-  Extracts HRV features from a series of RR intervals.
+  Iterate over windows of data from an array-like object.
 
   ### Parameters:
-  - rr (Iterable[float]): A series of RR intervals in milliseconds.
-  - fs (int): The sampling frequency in Hz.
-  - ws (int): The window size in seconds.
+  - values: An array-like object.
+  - window_size: The window size.
 
   ### Returns:
-  - DataFrame: A DataFrame that contains a series of HRV features.
+  - An iterator over windows of array-like object.
   '''
+  window_end = len(values)
+  window_size = int(window_size)
+  if window_size < window_end:
+    for index in range(window_end + 1 - window_size):
+      yield values[index: index + window_size]
+  else:
+    yield values
 
-  return DataFrame(_extract_hrv_features_from_rri(
-    rr=rr, fs=fs, ws=ws,
-  ))
-
-def extract_hrv_features_from_labelled_rri(
-  data: DataFrame,
-  fs = 4,
-  ws = 300,
-) -> DataFrame:
+def extract_hrv_features_from_rri_window(
+  rri_window: NDArray,
+  fs: int,
+) -> dict[str, float]:
   '''
-  Extracts HRV features from dataset. (`DataFrame {label, rri}`)
+  Extracts HRV features from a window of RR intervals.
 
   ### Parameters:
-  - data (DataFrame):
-    A dict-like object with series of `label` and `rri` data.
-    RR intervals are in milliseconds.
-  - fs (int): The sampling frequency in Hz.
-  - ws (int): The window size in seconds.
+  - rri_window: A window of RR intervals in milliseconds.
+  - fs: The sampling frequency in Hz.
+
+  ### Returns:
+  - A mapping that contains HRV features.
   '''
-  return DataFrame(_extract_hrv_features_from_labelled_rri(
-    data=data,
-    fs=fs,
-    ws=ws,
-  ))
-
-def _extract_hrv_features_from_rri(
-  rr: Iterable[float],
-  fs: float,
-  ws: float,
-) -> Iterable[dict[str, float]]:
-  import numpy as np
-
-  rr = np.array(rr)
-  ss = fs * ws # sample size
-
-  for rr_win_end in np.arange(ss, len(rr) + 1):
-    yield _extract_hrv_features_from_rri_window(
-      rr_win=rr[rr_win_end-ss: rr_win_end],
-      fs=fs,
-      ws=ws,
-    )
-
-def _extract_hrv_features_from_labelled_rri(
-  data: DataFrame,
-  fs: float,
-  ws: float,
-) -> Iterable[dict[str, float]]:
-  import numpy as np
-
-  ss = fs * ws # sample size
-
-  for data_win_end in np.arange(ss, len(data) + 1):
-    data_win = data[data_win_end-ss: data_win_end]
-    features = _extract_hrv_features_from_rri_window(
-      rr_win=data_win['rri'].values,
-      fs=fs,
-      ws=ws,
-    )
-    features['condition'] = data_win['label'].value_counts().idxmax()
-    yield features
-
-
-def _extract_hrv_features_from_rri_window(
-  rr_win: ndarray[float],
-  fs: float,
-  ws: float,
-) -> dict[str, float]:
   from antropy import sample_entropy, higuchi_fd
   import numpy as np
   from scipy.interpolate import interp1d
   from scipy.stats import skew, kurtosis
   from scipy.signal import welch
 
-  mrr = np.mean(rr_win)
-  sdrr = np.std(rr_win)
-  sd = np.diff(rr_win)
+  rri_window = np.array(rri_window)
+  ws = len(rri_window) # sample size
+
+  mrr = np.mean(rri_window)
+  sdrr = np.std(rri_window)
+  sd = np.diff(rri_window)
   sdsd = np.std(sd)
   rmssd = np.mean(sd ** 2) ** 0.5
   asd = abs(sd)
 
-  rel_rr = sd / (rr_win[1:] + rr_win[:-1]) * 2
+  rel_rr = sd / (rri_window[1:] + rri_window[:-1]) * 2
   rel_sd = np.diff(rel_rr)
   rel_sdrr = np.std(rel_rr)
   rel_rmssd = np.mean(rel_sd ** 2) ** 0.5
 
-  int_rr_x = np.cumsum(rr_win) / 1000
+  int_rr_x = np.cumsum(rri_window) / 1000
   int_rr_x_new = np.arange(1, max(int_rr_x), 1 / fs)
   int_rr = interp1d(
-    x=int_rr_x, y=rr_win, copy=False,
+    x=int_rr_x, y=rri_window, copy=False,
     kind='cubic', fill_value='extrapolate',
   )(int_rr_x_new)
   fr, ps = welch(
     x=int_rr, fs=fs,
-    nperseg=min(ws * fs, len(int_rr_x_new)),
+    nperseg=min(ws, len(int_rr_x_new)),
   )
   cond_vlf = (fr >= 0.003) & (fr <= 0.04)
   cond_lf = (fr >= 0.04) & (fr <= 0.15)
@@ -126,7 +81,7 @@ def _extract_hrv_features_from_rri_window(
 
   return {
     'MEAN_RR': mrr,
-    'MEDIAN_RR': np.median(rr_win),
+    'MEDIAN_RR': np.median(rri_window),
     'SDRR': sdrr,
     'RMSSD': rmssd,
     'SDSD': sdsd,
@@ -134,8 +89,8 @@ def _extract_hrv_features_from_rri_window(
     'HR': 60000 / mrr,
     'pNN25': np.mean(asd > 25) * 100,
     'pNN50': np.mean(asd > 50) * 100,
-    'KURT': kurtosis(rr_win),
-    'SKEW': skew(rr_win),
+    'KURT': kurtosis(rri_window),
+    'SKEW': skew(rri_window),
     'SD1': (2 ** -0.5) * sdsd,
     'SD2': (2 * (sdrr ** 2) - 0.5 * (sdsd ** 2)) ** 0.5,
     'MEAN_REL_RR': np.mean(rel_rr),
@@ -157,7 +112,7 @@ def _extract_hrv_features_from_rri_window(
     'TP': tp,
     'LF_HF': lf / hf,
     'HF_LF': hf / lf,
-    'sampen': sample_entropy(x=rr_win, order=0),
-    'higuci': higuchi_fd(rr_win),
+    'sampen': sample_entropy(x=rri_window, order=0),
+    'higuci': higuchi_fd(rri_window),
     'datasetId': 2,
   }
