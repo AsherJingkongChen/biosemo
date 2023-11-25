@@ -66,16 +66,13 @@ def extract_hrv_features_from_rri_window(
     x=int_rr_x, y=rri_window, copy=False,
     kind='cubic', fill_value='extrapolate',
   )(int_rr_x_new)
-  fr, ps = welch(
-    x=int_rr, fs=fs,
-    nperseg=min(ws, len(int_rr_x_new)),
-  )
-  cond_vlf = (fr >= 0.003) & (fr <= 0.04)
-  cond_lf = (fr >= 0.04) & (fr <= 0.15)
-  cond_hf = (fr >= 0.15) & (fr <= 0.4)
-  vlf = np.trapz(y=ps[cond_vlf], x=fr[cond_vlf])
-  lf = np.trapz(y=ps[cond_lf], x=fr[cond_lf])
-  hf = np.trapz(y=ps[cond_hf], x=fr[cond_hf])
+  F, P = welch(x=int_rr, fs=fs, nperseg=min(ws, len(int_rr_x_new)))
+  cond_vlf = (F >= 0.003) & (F <= 0.04)
+  cond_lf = (F >= 0.04) & (F <= 0.15)
+  cond_hf = (F >= 0.15) & (F <= 0.4)
+  vlf = np.trapz(y=P[cond_vlf], x=F[cond_vlf])
+  lf = np.trapz(y=P[cond_lf], x=F[cond_lf])
+  hf = np.trapz(y=P[cond_hf], x=F[cond_hf])
   nu = lf + hf
   tp = vlf + nu
 
