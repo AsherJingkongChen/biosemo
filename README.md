@@ -31,6 +31,10 @@ Ihmig, F. R., Gogeascoechea, A., Schäfer, S., Lass-Hennemann, J., & Michael, T.
 
 ## Workflow
 
+### Preparation
+1. Install Python 3
+2. Install Jupyter
+
 ### Notebooks
 Run them in this order for fully reproducing the experiment:
 1. `src/preprocess.ipynb`
