@@ -38,6 +38,9 @@ def extract_hrv_features_from_rri_window(
 
   ### Returns:
   - A mapping that contains HRV features.
+
+  ### References:
+  - Nkurikiyeyezu, Kizito & Shoji, Kana & Yokokubo, Anna & Lopez, Guillaume. (2019). Thermal Comfort and Stress Recognition in Office Environment. 10.5220/0007368802560263.
   '''
   from antropy import sample_entropy, higuchi_fd
   import numpy as np
