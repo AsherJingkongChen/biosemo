@@ -1,8 +1,11 @@
 .idea
 .DS_Store
+.vscode
 
+*.env
 *.swp
 
+node_modules
 __pycache__
 
 /datasets/swell/final/*.csv
