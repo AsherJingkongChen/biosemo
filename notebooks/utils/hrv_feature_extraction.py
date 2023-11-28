@@ -27,7 +27,6 @@ def get_window_iterator(
 
 def extract_hrv_features_from_rri_window(
   rri_window: NDArray,
-  fs: int,
 ) -> dict[str, float]:
   '''
   Extracts HRV features from a window of RR intervals.
@@ -64,12 +63,12 @@ def extract_hrv_features_from_rri_window(
   rel_rmssd = np.mean(rel_sd ** 2) ** 0.5
 
   int_rr_x = np.cumsum(rri_window) / 1000
-  int_rr_x_new = np.arange(1, max(int_rr_x), 1 / fs)
+  int_rr_x_new = np.arange(1, max(int_rr_x))
   int_rr = interp1d(
     x=int_rr_x, y=rri_window, copy=False,
     kind='cubic', fill_value='extrapolate',
   )(int_rr_x_new)
-  F, P = welch(x=int_rr, fs=fs, nperseg=min(ws, len(int_rr_x_new)))
+  F, P = welch(x=int_rr, nperseg=min(ws, len(int_rr_x_new)))
   cond_vlf = (F >= 0.003) & (F <= 0.04)
   cond_lf = (F >= 0.04) & (F <= 0.15)
   cond_hf = (F >= 0.15) & (F <= 0.4)
