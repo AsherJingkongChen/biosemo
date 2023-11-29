@@ -25,7 +25,6 @@
                 class="stress-label"
                 :style="{
                   color: stressColor,
-                  fontWeight: 'bold',
                 }">
                 {{ stressLabel }}
               </div>
@@ -258,7 +257,7 @@ import {
   stressPercentLabelMap,
 } from '@/utils';
 
-const meanStressLevel = 90 / 50;
+const meanStressLevel = 30 / 50;
 const meanStressPercent = computed(() =>
   Math.round(meanStressLevel * 50),
 );
@@ -287,6 +286,7 @@ const stressLabel = computed(() =>
   position: relative;
   width: 100%;
   .scroll-view {
+    $BORDER_RADIUS: 0.25em;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -298,23 +298,20 @@ const stressLabel = computed(() =>
       height: 45vh;
       background-color: var(--color-background-soft);
       border: thin solid var(--color-border);
-      border-radius: 0.25em;
+      border-radius: $BORDER_RADIUS;
       padding: 1em;
       overflow-x: hidden;
       overflow-y: scroll;
     }
     ::-webkit-scrollbar {
       display: block;
-      width: 0.25em;
-    }
-    ::-webkit-scrollbar-corner {
-      width: 0.5em;
+      width: $BORDER_RADIUS;
     }
     ::-webkit-scrollbar-track {
-      width: 0.5em;
+      width: 2 * $BORDER_RADIUS;
     }
     ::-webkit-scrollbar-thumb {
-      border-radius: 0.5em;
+      border-radius: 2 * $BORDER_RADIUS;
       background-color: var(--color-border-hover);
     }
   }
@@ -328,7 +325,7 @@ const stressLabel = computed(() =>
       gap: 1em;
       position: relative;
       width: 100%;
-      padding: 0.5em 0.25em;
+      padding: 1em 0.25em;
       .stress-ribbon {
         position: relative;
         width: 0.5em;
@@ -393,17 +390,26 @@ const stressLabel = computed(() =>
       position: relative;
       width: 100%;
       .a--- {
+        $PADDING_BLOCK: 0.25em;
+        $PADDING_INLINE: 1em;
         display: flex;
         flex-direction: row;
         align-items: center;
         position: relative;
         border: thin solid var(--color-border);
-        border-radius: 1.5em;
+        border-radius: 1 + 2 * $PADDING_BLOCK;
         > * {
-          padding: 0.25em 1em;
+          padding: $PADDING_BLOCK $PADDING_INLINE;
+          text-align: center;
         }
         .stress-label {
-          filter: constrast(2) saturate(2);
+          $LABEL_MAX_CHARS: 9;
+          border-left: thin solid var(--color-border);
+          min-width: 2 * $PADDING_INLINE + 0.5em * $LABEL_MAX_CHARS;
+          font-weight: bold;
+          text-shadow:
+            1px 1px 0 var(--color-border),
+            1px 0px 0 var(--color-border);
         }
       }
       .b--- {
@@ -418,7 +424,6 @@ const stressLabel = computed(() =>
           position: relative;
           cursor: pointer;
           color: var(--color-background);
-          font-weight: bold;
         }
       }
     }

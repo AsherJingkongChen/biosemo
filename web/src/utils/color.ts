@@ -6,17 +6,20 @@ export function stressPercentColorMap(
   const p_norm =
     1 - Math.min(1, Math.abs(percent / MID - 1));
   const p_norm_cmpl = 1 - p_norm;
-  let r = p_norm * 255,
-    g = p_norm * 236,
-    b = p_norm * 132;
+  // yellow
+  let r = p_norm * 250,
+    g = p_norm * 200,
+    b = p_norm * 70;
   if (percent < MID) {
-    r += p_norm_cmpl * 99;
-    g += p_norm_cmpl * 191;
-    b += p_norm_cmpl * 124;
+    // green
+    r += p_norm_cmpl * 70;
+    g += p_norm_cmpl * 200;
+    b += p_norm_cmpl * 90;
   } else {
-    r += p_norm_cmpl * 249;
-    g += p_norm_cmpl * 105;
-    b += p_norm_cmpl * 108;
+    // red
+    r += p_norm_cmpl * 250;
+    g += p_norm_cmpl * 70;
+    b += p_norm_cmpl * 70;
   }
   r = Math.floor(r);
   g = Math.floor(g);
