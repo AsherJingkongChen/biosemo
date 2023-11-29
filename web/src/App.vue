@@ -30,7 +30,7 @@
               </div>
             </section>
             <section class="b---">
-              <div class="upload-file">Upload</div>
+              <div class="text text-upload-file">Upload</div>
             </section>
           </div>
         </section>
@@ -257,7 +257,7 @@ import {
   stressPercentLabelMap,
 } from '@/utils';
 
-const meanStressLevel = 30 / 50;
+const meanStressLevel = 12 / 50;
 const meanStressPercent = computed(() =>
   Math.round(meanStressLevel * 50),
 );
@@ -280,13 +280,13 @@ const stressLabel = computed(() =>
   height: 100%;
 }
 .b- {
+  $BORDER_RADIUS: 0.25em;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   width: 100%;
   .scroll-view {
-    $BORDER_RADIUS: 0.25em;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -294,12 +294,6 @@ const stressLabel = computed(() =>
     .scroll-target {
       position: relative;
       width: 100%;
-      height: 100%;
-      height: 45vh;
-      background-color: var(--color-background-soft);
-      border: thin solid var(--color-border);
-      border-radius: $BORDER_RADIUS;
-      padding: 1em;
       overflow-x: hidden;
       overflow-y: scroll;
     }
@@ -316,16 +310,23 @@ const stressLabel = computed(() =>
     }
   }
   .chat-card-list {
+    $CHAT_CARD_PADDING: 1em;
     display: flex;
     flex-direction: column;
     position: relative;
+    min-height: calc(var(--line-height) * 5em + 3 * $CHAT_CARD_PADDING + 4px);
+    max-height: 45vh;
+    background-color: var(--color-background-soft);
+    border: thin solid var(--color-border);
+    border-radius: $BORDER_RADIUS;
+    padding: $CHAT_CARD_PADDING / 2;
     .chat-card-item {
       display: flex;
       flex-direction: row;
       gap: 1em;
       position: relative;
       width: 100%;
-      padding: 1em 0.25em;
+      padding: $CHAT_CARD_PADDING;
       .stress-ribbon {
         position: relative;
         width: 0.5em;
@@ -390,22 +391,22 @@ const stressLabel = computed(() =>
       position: relative;
       width: 100%;
       .a--- {
-        $PADDING_BLOCK: 0.25em;
-        $PADDING_INLINE: 1em;
+        $BUTTON_PADDING_BLOCK: 0.25em;
+        $BUTTON_PADDING_INLINE: 1em;
         display: flex;
         flex-direction: row;
         align-items: center;
         position: relative;
         border: thin solid var(--color-border);
-        border-radius: 1 + 2 * $PADDING_BLOCK;
+        border-radius: 1 + 2 * $BUTTON_PADDING_BLOCK;
         > * {
-          padding: $PADDING_BLOCK $PADDING_INLINE;
+          padding: $BUTTON_PADDING_BLOCK $BUTTON_PADDING_INLINE;
           text-align: center;
         }
         .stress-label {
           $LABEL_MAX_CHARS: 9;
           border-left: thin solid var(--color-border);
-          min-width: 2 * $PADDING_INLINE + 0.5em * $LABEL_MAX_CHARS;
+          min-width: 2 * $BUTTON_PADDING_INLINE + 0.5 * $LABEL_MAX_CHARS;
           font-weight: bold;
           text-shadow:
             1px 1px 0 var(--color-border),
@@ -416,14 +417,14 @@ const stressLabel = computed(() =>
         position: relative;
         border: thin solid transparent;
         border-radius: 1.5em;
-        background-color: var(--color-azure);
-        > * {
-          padding: 0.25em 1em;
-        }
-        .upload-file {
-          position: relative;
-          cursor: pointer;
-          color: var(--color-background);
+        padding: 0.25em 1em;
+        position: relative;
+        cursor: pointer;
+        transition: 0.15s linear;
+        background-color: var(--color-turquoise);
+        color: var(--color-background);
+        &:hover {
+          filter: brightness(0.85);
         }
       }
     }
