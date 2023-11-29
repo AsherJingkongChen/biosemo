@@ -1,4 +1,7 @@
-export function percentColorMap_G2R(percent: number): string {
+export function stressPercentColorMap(
+  percent: number,
+  alpha?: number | string,
+): string {
   const MID = 50;
   const p_norm =
     1 - Math.min(1, Math.abs(percent / MID - 1));
@@ -18,5 +21,9 @@ export function percentColorMap_G2R(percent: number): string {
   r = Math.floor(r);
   g = Math.floor(g);
   b = Math.floor(b);
-  return `rgb(${r}, ${g}, ${b})`;
+  if (alpha !== undefined) {
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  } else {
+    return `rgb(${r}, ${g}, ${b})`;
+  }
 }

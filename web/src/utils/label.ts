@@ -1,9 +1,6 @@
-export function percentLabelMap(percent: number) {
-  if (percent > 75) {
-    return 'Stressful';
-  } else if (percent > 25) {
-    return 'Neutral';
-  } else {
-    return 'Relaxed';
-  }
+export function stressPercentLabelMap(percent: number) {
+  if (percent > 85) return 'Stressful';
+  if (percent > 70) return 'Tense';
+  if (percent > 25) return 'Neutral';
+  return 'Relaxed';
 }
