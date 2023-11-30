@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { stressPercentColorMap } from '@/utils';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 
 const props = defineProps<{
   percent: number;

@@ -1,18 +1,17 @@
 <template>
   <header></header>
-
   <main>
     <div class="background">
       <section class="u-">
         <section class="a--">
           <DonutChart
             class="donut-chart"
-            :percent="meanStressPercent"
-            :foreground-color="stressColor"
+            :percent="stressLevel.percent"
+            :foreground-color="stressLevel.color"
             background-color="var(--color-border)"
             :stroke-width-percent="15" />
           <div class="donut-chart-percent">
-            {{ meanStressPercent }}%
+            {{ stressLevel.percentRounded }}%
           </div>
         </section>
         <section class="b--">
@@ -24,13 +23,23 @@
               <div
                 class="stress-label"
                 :style="{
-                  color: stressColor,
+                  color: stressLevel.color,
                 }">
-                {{ stressLabel }}
+                {{ stressLevel.label }}
               </div>
             </section>
             <section class="b---">
-              <div class="text text-upload-file">Upload</div>
+              <div
+                class="text text-upload-file"
+                @click="biosigFileInputElem?.click()">
+                Upload {{ (kk * 100).toFixed(1) }}%
+              </div>
+              <input
+                type="file"
+                name="biosig-file"
+                ref="biosigFileInputElem"
+                @change="onChangeInputBiosigFile"
+                hidden />
             </section>
           </div>
         </section>
@@ -249,27 +258,70 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from '@vue/reactivity';
 import DonutChart from '@/components/DonutChart.vue';
 import StressRibbon from '@/components/StressRibbon.vue';
-import {
-  stressPercentColorMap,
-  stressPercentLabelMap,
-} from '@/utils';
+import { ref } from 'vue';
+import { useStressLevelStore } from './stores/stressLevel';
 
-const meanStressLevel = 12 / 50;
-const meanStressPercent = computed(() =>
-  Math.round(meanStressLevel * 50),
-);
-const stressColor = computed(() =>
-  stressPercentColorMap(meanStressPercent.value),
-);
-const stressLabel = computed(() =>
-  stressPercentLabelMap(meanStressPercent.value),
-);
+const biosigFileInputElem = ref<
+  HTMLInputElement | undefined
+>();
+
+// [TODO]
+// stressLevel store ~~ biosigFile ~~ percent ~~ color ~~ label
+const kk = ref(0);
+const stressLevel = useStressLevelStore();
+
+async function onChangeInputBiosigFile() {
+  const file = biosigFileInputElem.value?.files?.[0];
+  if (!file) return;
+  const content = await file.text();
+
+  const response = await fetch(
+    'http://localhost:8081/stress-classifier/levels',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: content,
+    },
+  );
+
+  const levelsStreamSize = parseInt(
+    response.headers.get('X-Levels-Stream-Size') ?? '1',
+  );
+  const reader = response.body?.getReader();
+  const decoder = new TextDecoder('utf-8');
+  if (!reader) return;
+  const queue: number[] = [];
+  const queueCap = 120;
+  for (
+    let chunk = await reader.read();
+    !chunk.done;
+    chunk = await reader.read()
+  ) {
+    if (!chunk.value) continue;
+
+    const level = parseFloat(decoder.decode(chunk.value));
+    queue.push(level);
+    if (queue.length > queueCap) {
+      queue.shift();
+    }
+    stressLevel.mean =
+      queue.reduce((acc, curr) => acc + curr, 0) /
+      queue.length;
+
+    kk.value += 1 / levelsStreamSize;
+    // sleep for a while to simulate real-time
+    await new Promise((r) => setTimeout(r, 10));
+  }
+  kk.value = 0;
+}
 </script>
 
 <style scoped lang="scss">
+@use 'sass:math';
 @import './assets/base.css';
 
 .background {
@@ -314,12 +366,15 @@ const stressLabel = computed(() =>
     display: flex;
     flex-direction: column;
     position: relative;
-    min-height: calc(var(--line-height) * 5em + 3 * $CHAT_CARD_PADDING + 4px);
+    min-height: calc(
+      var(--line-height) * 5em + 3 * $CHAT_CARD_PADDING +
+        4px
+    );
     max-height: 45vh;
     background-color: var(--color-background-soft);
     border: thin solid var(--color-border);
     border-radius: $BORDER_RADIUS;
-    padding: $CHAT_CARD_PADDING / 2;
+    padding: math.div($CHAT_CARD_PADDING, 2);
     .chat-card-item {
       display: flex;
       flex-direction: row;
@@ -400,13 +455,15 @@ const stressLabel = computed(() =>
         border: thin solid var(--color-border);
         border-radius: 1 + 2 * $BUTTON_PADDING_BLOCK;
         > * {
-          padding: $BUTTON_PADDING_BLOCK $BUTTON_PADDING_INLINE;
+          padding: $BUTTON_PADDING_BLOCK
+            $BUTTON_PADDING_INLINE;
           text-align: center;
         }
         .stress-label {
           $LABEL_MAX_CHARS: 9;
           border-left: thin solid var(--color-border);
-          min-width: 2 * $BUTTON_PADDING_INLINE + 0.5 * $LABEL_MAX_CHARS;
+          min-width: 2 * $BUTTON_PADDING_INLINE + 0.5 *
+            $LABEL_MAX_CHARS;
           font-weight: bold;
           text-shadow:
             1px 1px 0 var(--color-border),
@@ -420,7 +477,7 @@ const stressLabel = computed(() =>
         padding: 0.25em 1em;
         position: relative;
         cursor: pointer;
-        transition: 0.15s linear;
+        transition: 0.25s linear;
         background-color: var(--color-turquoise);
         color: var(--color-background);
         &:hover {
