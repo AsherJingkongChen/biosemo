@@ -315,7 +315,7 @@ watch(
 
 // functions
 
-async function onChangeBiosigFileInputElem(ev: Event) {
+async function onChangeBiosigFileInputElem() {
   const file = biosigFileInputElem?.value?.files?.[0];
   if (!file) {
     console.debug('Cancelled uploading file');
@@ -512,7 +512,7 @@ async function onChangeBiosigFileInputElem(ev: Event) {
         &.locked {
           &,
           * {
-            cursor: progress;
+            cursor: wait;
           }
           background-color: var(--color-border);
           color: var(--color-heading);
