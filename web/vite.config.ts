@@ -9,6 +9,7 @@ export default defineConfig({
   server: {
     port: 8080,
   },
+  envPrefix: 'VUE_APP_',
   plugins: [
     vue(),
     vueJsx(),

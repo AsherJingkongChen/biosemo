@@ -3,8 +3,7 @@ export function stressPercentColorMap(
   alpha?: number | string,
 ): string {
   const MID = 50;
-  const p_norm =
-    1 - Math.min(1, Math.abs(percent / MID - 1));
+  const p_norm = 1 - Math.min(1, Math.abs(percent / MID - 1));
   const p_norm_cmpl = 1 - p_norm;
   // yellow
   let r = p_norm * 250,

@@ -33,7 +33,7 @@
   --color-border-hover: var(--vt-c-divider-light-1);
 
   --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-text-light-2);
 
   --section-gap: 160px;
 }
@@ -86,7 +86,6 @@
 }
 
 body {
-  min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);
   line-height: var(--line-height);

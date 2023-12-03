@@ -3,6 +3,7 @@
 .vscode
 
 *.env
+!/web/.env*
 *.swp
 
 dist

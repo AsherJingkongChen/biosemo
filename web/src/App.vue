@@ -5,40 +5,47 @@
       <section class="u-">
         <section class="a--">
           <DonutChart
-            class="donut-chart"
-            :percent="stressLevel.percent"
-            :foreground-color="stressLevel.color"
+            class="stress-percent-chart"
+            :percent="stressLevelStore.percent"
+            :foreground-color="stressLevelStore.color"
             background-color="var(--color-border)"
             :stroke-width-percent="15" />
-          <div class="donut-chart-percent">
-            {{ stressLevel.percentRounded }}%
+          <div class="stress-percent">
+            {{ stressLevelStore.percentRounded }}%
           </div>
         </section>
         <section class="b--">
           <div class="cabinet">
-            <section class="a---">
-              <div class="text text-stress-level">
-                Stress Level
-              </div>
+            <section class="stress-level-box">
+              <div class="stress-level-text">Stress Level</div>
               <div
                 class="stress-label"
                 :style="{
-                  color: stressLevel.color,
+                  color: stressLevelStore.color,
                 }">
-                {{ stressLevel.label }}
+                {{ stressLevelStore.label }}
               </div>
             </section>
-            <section class="b---">
+            <section
+              class="biosig-file"
+              :class="{
+                locked: isBiosigFileInputElemLocked,
+              }">
               <div
-                class="text text-upload-file"
-                @click="biosigFileInputElem?.click()">
-                Upload {{ (kk * 100).toFixed(1) }}%
+                class="biosig-file-text"
+                @click="
+                  if (!isBiosigFileInputElemLocked) {
+                    biosigFileInputElem?.click();
+                  }
+                ">
+                {{ biosigFileText }}
               </div>
               <input
                 type="file"
-                name="biosig-file"
+                id="biosig-file-input"
+                accept="application/json"
                 ref="biosigFileInputElem"
-                @change="onChangeInputBiosigFile"
+                @change="onChangeBiosigFileInputElem"
                 hidden />
             </section>
           </div>
@@ -46,14 +53,14 @@
       </section>
       <section class="b-">
         <div class="scroll-view">
-          <div class="scroll-target chat-card-list">
+          <div class="scroll-target care-card-list">
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="0">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="25" />
-              <div class="chat-info">
+              <div class="care-info">
                 了解，壓力很大的時候可以嘗試以下幾種方法來幫助自己紓壓：
                 <br /><br />
                 1.
@@ -78,20 +85,18 @@
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="1">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="73" />
-              <div class="chat-info">
-                1.
-                深呼吸：專注深呼吸轉移注意力，紓解壓力。<br />
+              <div class="care-info">
+                1. 深呼吸：專注深呼吸轉移注意力，紓解壓力。<br />
                 2.
                 運動：釋放內啡肽，嘗試散步、跑步等活動減輕壓力。<br />
                 3.
                 交流：與朋友、家人分享感受，獲得支持和建議。<br />
-                4.
-                時間管理：有效處理壓力，合理安排休息時間。<br />
+                4. 時間管理：有效處理壓力，合理安排休息時間。<br />
                 5.
                 飲食與睡眠：均衡飲食、充足睡眠對減輕壓力有幫助。<br />
                 6.
@@ -101,12 +106,12 @@
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="2">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="35" />
-              <div class="chat-info">
+              <div class="care-info">
                 1.
                 <strong>深呼吸：</strong
                 >專注慢慢的深呼吸，有助於放鬆身心，轉移注意力。
@@ -141,44 +146,42 @@
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="3">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="60" />
-              <div class="chat-info">
-                Ok, I will try to help you. Can you tell me
-                what happened? Nevermind, I will try to help
-                you. Can you tell me what happened?
+              <div class="care-info">
+                Ok, I will try to help you. Can you tell me what
+                happened? Nevermind, I will try to help you. Can
+                you tell me what happened?
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="4">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="60" />
-              <div class="chat-info">
-                Ok, I will try to help you. Can you tell me
-                what happened? Nevermind, I will try to help
-                you. Can you tell me what happened?
+              <div class="care-info">
+                Ok, I will try to help you. Can you tell me what
+                happened? Nevermind, I will try to help you. Can
+                you tell me what happened?
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="5">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="86" />
-              <div class="chat-info">
-                1.
-                深呼吸：專注深呼吸轉移注意力，紓解壓力。<br />
+              <div class="care-info">
+                1. 深呼吸：專注深呼吸轉移注意力，紓解壓力。<br />
                 2.
                 運動：釋放內啡肽，嘗試散步、跑步等活動減輕壓力。<br />
                 3.
                 交流：與朋友、家人分享感受，獲得支持和建議。<br />
-                4.
-                時間管理：有效處理壓力，合理安排休息時間。<br />
+                4. 時間管理：有效處理壓力，合理安排休息時間。<br />
                 5.
                 飲食與睡眠：均衡飲食、充足睡眠對減輕壓力有幫助。<br />
                 6.
@@ -188,12 +191,12 @@
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="6">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="29" />
-              <div class="chat-info">
+              <div class="care-info">
                 1.
                 <strong>深呼吸：</strong
                 >專注慢慢的深呼吸，有助於放鬆身心，轉移注意力。
@@ -228,20 +231,18 @@
               </div>
             </div>
             <div
-              class="chat-card-item"
+              class="care-card-item"
               key="7">
               <StressRibbon
                 class="stress-ribbon"
                 :percent="5" />
-              <div class="chat-info">
-                1.
-                深呼吸：專注深呼吸轉移注意力，紓解壓力。<br />
+              <div class="care-info">
+                1. 深呼吸：專注深呼吸轉移注意力，紓解壓力。<br />
                 2.
                 運動：釋放內啡肽，嘗試散步、跑步等活動減輕壓力。<br />
                 3.
                 交流：與朋友、家人分享感受，獲得支持和建議。<br />
-                4.
-                時間管理：有效處理壓力，合理安排休息時間。<br />
+                4. 時間管理：有效處理壓力，合理安排休息時間。<br />
                 5.
                 飲食與睡眠：均衡飲食、充足睡眠對減輕壓力有幫助。<br />
                 6.
@@ -260,63 +261,81 @@
 <script setup lang="ts">
 import DonutChart from '@/components/DonutChart.vue';
 import StressRibbon from '@/components/StressRibbon.vue';
-import { ref } from 'vue';
-import { useStressLevelStore } from './stores/stressLevel';
+import { computed, ref, watch } from 'vue';
+import {
+  useBiosigFileStore,
+  useStressLevelStore,
+} from './stores';
 
-const biosigFileInputElem = ref<
-  HTMLInputElement | undefined
->();
+// ref
 
-// [TODO]
-// stressLevel store ~~ biosigFile ~~ percent ~~ color ~~ label
-const kk = ref(0);
-const stressLevel = useStressLevelStore();
+const biosigFileInputElem = ref<HTMLInputElement | undefined>();
+const isBiosigFileInputElemLocked = ref(false);
 
-async function onChangeInputBiosigFile() {
-  const file = biosigFileInputElem.value?.files?.[0];
-  if (!file) return;
-  const content = await file.text();
+// computed
 
-  const response = await fetch(
-    'http://localhost:8081/stress-classifier/levels',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: content,
-    },
-  );
-
-  const levelsStreamSize = parseInt(
-    response.headers.get('X-Levels-Stream-Size') ?? '1',
-  );
-  const reader = response.body?.getReader();
-  const decoder = new TextDecoder('utf-8');
-  if (!reader) return;
-  const queue: number[] = [];
-  const queueCap = 120;
-  for (
-    let chunk = await reader.read();
-    !chunk.done;
-    chunk = await reader.read()
-  ) {
-    if (!chunk.value) continue;
-
-    const level = parseFloat(decoder.decode(chunk.value));
-    queue.push(level);
-    if (queue.length > queueCap) {
-      queue.shift();
+const biosigFileText = computed(() => {
+  if (!isBiosigFileInputElemLocked.value) {
+    return 'Upload';
+  } else {
+    let progress: number | string = '?';
+    if (biosigFileStore.length) {
+      progress = Math.round(
+        (biosigFileStore.tick / biosigFileStore.length) * 100,
+      );
     }
-    stressLevel.mean =
-      queue.reduce((acc, curr) => acc + curr, 0) /
-      queue.length;
-
-    kk.value += 1 / levelsStreamSize;
-    // sleep for a while to simulate real-time
-    await new Promise((r) => setTimeout(r, 10));
+    return `Processing ${progress}%`;
   }
-  kk.value = 0;
+});
+
+// store
+
+const stressLevelStore = useStressLevelStore();
+const biosigFileStore = useBiosigFileStore();
+
+// watcher
+
+let movingWindow: number[] = [];
+const movingWindowCap = 60;
+
+watch(
+  () => biosigFileStore.tick,
+  () => {
+    if (biosigFileStore.category === 'stress') {
+      movingWindow.push(biosigFileStore.level);
+      if (movingWindow.length > movingWindowCap) {
+        movingWindow.shift();
+      }
+
+      stressLevelStore.mean =
+        movingWindow.reduce((acc, curr) => acc + curr, 0) /
+        movingWindow.length;
+    }
+  },
+);
+
+// functions
+
+async function onChangeBiosigFileInputElem(ev: Event) {
+  console.log(ev);
+  const file = biosigFileInputElem?.value?.files?.[0];
+  if (!file) {
+    throw new Error(
+      'The file input element has no attribute "files"',
+    );
+  }
+
+  if (isBiosigFileInputElemLocked.value) {
+    throw new Error('The file input element is locked now');
+  }
+  isBiosigFileInputElemLocked.value = true;
+
+  await biosigFileStore.getLevels(file).finally(() => {
+    isBiosigFileInputElemLocked.value = false;
+    biosigFileStore.$reset();
+    stressLevelStore.$reset();
+    movingWindow = [];
+  });
 }
 </script>
 
@@ -361,21 +380,20 @@ async function onChangeInputBiosigFile() {
       background-color: var(--color-border-hover);
     }
   }
-  .chat-card-list {
+  .care-card-list {
     $CHAT_CARD_PADDING: 1em;
     display: flex;
     flex-direction: column;
     position: relative;
     min-height: calc(
-      var(--line-height) * 5em + 3 * $CHAT_CARD_PADDING +
-        4px
+      var(--line-height) * 5em + 3 * $CHAT_CARD_PADDING + 4px
     );
-    max-height: 45vh;
+    max-height: 50vh;
     background-color: var(--color-background-soft);
     border: thin solid var(--color-border);
     border-radius: $BORDER_RADIUS;
     padding: math.div($CHAT_CARD_PADDING, 2);
-    .chat-card-item {
+    .care-card-item {
       display: flex;
       flex-direction: row;
       gap: 1em;
@@ -392,7 +410,7 @@ async function onChangeInputBiosigFile() {
           var(--color-background-soft) 10em
         );
       }
-      .chat-info {
+      .care-info {
         position: relative;
         width: 100%;
         word-break: break-word;
@@ -414,11 +432,11 @@ async function onChangeInputBiosigFile() {
     position: relative;
     width: 25%;
     min-width: 10em;
-    .donut-chart {
+    .stress-percent-chart {
       position: relative;
       width: 100%;
     }
-    .donut-chart-percent {
+    .stress-percent {
       display: grid;
       place-items: center;
       position: absolute;
@@ -428,6 +446,7 @@ async function onChangeInputBiosigFile() {
       height: 100%;
       font-size: 2em;
       font-weight: 500;
+      color: var(--color-heading);
     }
   }
   .b-- {
@@ -445,7 +464,7 @@ async function onChangeInputBiosigFile() {
       gap: 2em;
       position: relative;
       width: 100%;
-      .a--- {
+      .stress-level-box {
         $BUTTON_PADDING_BLOCK: 0.25em;
         $BUTTON_PADDING_INLINE: 1em;
         display: flex;
@@ -455,9 +474,11 @@ async function onChangeInputBiosigFile() {
         border: thin solid var(--color-border);
         border-radius: 1 + 2 * $BUTTON_PADDING_BLOCK;
         > * {
-          padding: $BUTTON_PADDING_BLOCK
-            $BUTTON_PADDING_INLINE;
+          padding: $BUTTON_PADDING_BLOCK $BUTTON_PADDING_INLINE;
           text-align: center;
+        }
+        .stress-level-text {
+          color: var(--color-heading);
         }
         .stress-label {
           $LABEL_MAX_CHARS: 9;
@@ -470,18 +491,33 @@ async function onChangeInputBiosigFile() {
             1px 0px 0 var(--color-border);
         }
       }
-      .b--- {
+      .biosig-file {
         position: relative;
         border: thin solid transparent;
         border-radius: 1.5em;
         padding: 0.25em 1em;
-        position: relative;
-        cursor: pointer;
         transition: 0.25s linear;
-        background-color: var(--color-turquoise);
-        color: var(--color-background);
         &:hover {
           filter: brightness(0.85);
+        }
+        & {
+          &,
+          * {
+            cursor: pointer;
+          }
+          background-color: var(--color-turquoise);
+          color: var(--color-background);
+        }
+        &.locked {
+          &,
+          * {
+            cursor: progress;
+          }
+          background-color: var(--color-border);
+          color: var(--color-heading);
+        }
+        .biosig-file-text {
+          user-select: none;
         }
       }
     }

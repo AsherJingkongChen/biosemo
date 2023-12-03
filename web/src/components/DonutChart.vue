@@ -44,9 +44,7 @@ const radians = computed(() => {
   const value = degrees - 180;
   return (value * Math.PI) / 180;
 });
-const largeArc = computed(() =>
-  props.percent > X_2 ? 1 : 0,
-);
+const largeArc = computed(() => (props.percent > X_2 ? 1 : 0));
 const foregroundD = computed(
   () => `\
 M ${X} ${y.value} \
