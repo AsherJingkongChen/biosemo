@@ -12,6 +12,7 @@
     "format": "prettier --write index.html *.ts src/"
   },
   "dependencies": {
+    "marked": "^11.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.4"
   },

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { stressPercentColorMap } from '@/utils';
+import { percentColorMap_RYG } from '@/utils';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -12,9 +12,9 @@ const props = defineProps<{
 
 const background = computed(() => {
   const colors = [
-    stressPercentColorMap(props.percent, 1.0),
-    stressPercentColorMap(props.percent, 0.5),
-    stressPercentColorMap(props.percent, 0.25),
+    percentColorMap_RYG(props.percent, 1.0),
+    percentColorMap_RYG(props.percent, 0.5),
+    percentColorMap_RYG(props.percent, 0.25),
   ];
   return `\
 linear-gradient(\

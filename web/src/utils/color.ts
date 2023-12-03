@@ -1,4 +1,4 @@
-export function stressPercentColorMap(
+export function percentColorMap_RYG(
   percent: number,
   alpha?: number | string,
 ): string {
