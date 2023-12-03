@@ -43,7 +43,7 @@
               <input
                 type="file"
                 id="biosig-file-input"
-                accept="application/json"
+                accept="application/json, .json"
                 ref="biosigFileInputElem"
                 @change="onChangeBiosigFileInputElem"
                 hidden />
@@ -278,20 +278,19 @@ const biosigFileText = computed(() => {
   if (!isBiosigFileInputElemLocked.value) {
     return 'Upload';
   } else {
-    let progress: number | string = '?';
-    if (biosigFileStore.length) {
-      progress = Math.round(
-        (biosigFileStore.tick / biosigFileStore.length) * 100,
-      );
-    }
+    const progress = biosigFileStore.length
+      ? Math.round(
+          (biosigFileStore.tick / biosigFileStore.length) * 100,
+        )
+      : '?';
     return `Processing ${progress}%`;
   }
 });
 
 // store
 
-const stressLevelStore = useStressLevelStore();
 const biosigFileStore = useBiosigFileStore();
+const stressLevelStore = useStressLevelStore();
 
 // watcher
 
@@ -317,12 +316,10 @@ watch(
 // functions
 
 async function onChangeBiosigFileInputElem(ev: Event) {
-  console.log(ev);
   const file = biosigFileInputElem?.value?.files?.[0];
   if (!file) {
-    throw new Error(
-      'The file input element has no attribute "files"',
-    );
+    console.debug('Cancelled uploading file');
+    return;
   }
 
   if (isBiosigFileInputElemLocked.value) {
@@ -330,12 +327,16 @@ async function onChangeBiosigFileInputElem(ev: Event) {
   }
   isBiosigFileInputElemLocked.value = true;
 
-  await biosigFileStore.getLevels(file).finally(() => {
-    isBiosigFileInputElemLocked.value = false;
-    biosigFileStore.$reset();
-    stressLevelStore.$reset();
-    movingWindow = [];
-  });
+  await biosigFileStore
+    .getLevels(file)
+    .catch((e) => {
+      alert(`Failed to get stress levels from the file:\n${e}`);
+    })
+    .finally(() => {
+      isBiosigFileInputElemLocked.value = false;
+      stressLevelStore.$reset();
+      movingWindow = [];
+    });
 }
 </script>
 
@@ -496,7 +497,7 @@ async function onChangeBiosigFileInputElem(ev: Event) {
         border: thin solid transparent;
         border-radius: 1.5em;
         padding: 0.25em 1em;
-        transition: 0.25s linear;
+        transition: 0.15s linear;
         &:hover {
           filter: brightness(0.85);
         }

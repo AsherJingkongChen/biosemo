@@ -29,6 +29,9 @@ export const useBiosigFileStore = defineStore('biosigFile', {
       // parse file
       const body = await file.text();
       const { category } = JSON.parse(body);
+      if (category === undefined) {
+        throw new Error('The biosig file has no category');
+      }
       this._category = category;
 
       // fetch API
