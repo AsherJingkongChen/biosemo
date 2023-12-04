@@ -10,6 +10,34 @@ const defaultState = () => ({
         'Share your feelings with us. ' +
         "Let's start this journey together!",
     },
+    {
+      percent: 0,
+      text:
+        'Welcome! ' +
+        'Share your feelings with us. ' +
+        "Let's start this journey together!",
+    },
+    {
+      percent: 0,
+      text:
+        'Welcome! ' +
+        'Share your feelings with us. ' +
+        "Let's start this journey together!",
+    },
+    {
+      percent: 0,
+      text:
+        'Welcome! ' +
+        'Share your feelings with us. ' +
+        "Let's start this journey together!",
+    },
+    {
+      percent: 0,
+      text:
+        'Welcome! ' +
+        'Share your feelings with us. ' +
+        "Let's start this journey together!",
+    },
   ],
   _running: false,
 });

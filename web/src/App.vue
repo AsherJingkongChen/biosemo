@@ -57,7 +57,8 @@
         <div class="mono-consult-card-list-scroller">
           <div
             class="mono-consult-card-list"
-            ref="listElem">
+            ref="listElem"
+            v-auto-scroll-down>
             <MonoConsultCard
               v-for="(item, index) in monoConsultsStore"
               :key="index"
@@ -73,12 +74,13 @@
 
 <script setup lang="ts">
 import DonutChart from '@/components/DonutChart.vue';
-import MonoConsultCard from './components/MonoConsultCard.vue';
-import { computed, ref, watch } from 'vue';
+import MonoConsultCard from '@/components/MonoConsultCard.vue';
+import { computed, ref, watch, type Directive } from 'vue';
 import {
   useEmoLevelStore,
   useMonoConsultsStore,
-} from './stores';
+} from '@/stores';
+import { vAutoScrollDown } from '@/utils';
 
 // ref
 
@@ -127,56 +129,6 @@ watch(
 );
 
 const listElem = ref<HTMLDivElement | undefined>();
-
-// let shouldScrollToBottom = false;
-
-// watch(
-//   () => monoConsultsStore.running,
-//   (running) => {
-//     if (listElem.value === undefined) {
-//       return;
-//     }
-//     if (running) {
-//       const a =
-//         listElem.value.scrollHeight - listElem.value.scrollTop;
-//       const b = listElem.value.clientHeight;
-//       shouldScrollToBottom = a <= b;
-//       return;
-//     }
-//     const a =
-//       listElem.value.scrollHeight - listElem.value.scrollTop;
-//     const b = listElem.value.clientHeight;
-//     console.log(a, b);
-//     if (a > b && shouldScrollToBottom) {
-//       listElem.value.scrollBy({
-//         behavior: 'smooth',
-//         top: a - b,
-//       });
-//     }
-//   },
-// );
-
-// const vAutoScrollDown = {
-//     // called before bound element's attributes
-//   // or event listeners are applied
-//   created(el, binding, vnode, prevVnode) {
-//     // see below for details on arguments
-//   },
-//   // called right before the element is inserted into the DOM.
-//   beforeMount(el, binding, vnode, prevVnode) {},
-//   // called when the bound element's parent component
-//   // and all its children are mounted.
-//   mounted(el, binding, vnode, prevVnode) {},
-//   // called before the parent component is updated
-//   beforeUpdate(el, binding, vnode, prevVnode) {},
-//   // called after the parent component and
-//   // all of its children have updated
-//   updated(el, binding, vnode, prevVnode) {},
-//   // called before the parent component is unmounted
-//   beforeUnmount(el, binding, vnode, prevVnode) {},
-//   // called when the parent component is unmounted
-//   unmounted(el, binding, vnode, prevVnode) {}
-// };
 
 // functions
 
