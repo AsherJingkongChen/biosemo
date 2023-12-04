@@ -18,14 +18,14 @@
           <div class="cabinet">
             <section class="emo-status">
               <div class="emo-category">
-                {{ emoCategory }}
+                {{ emoLevelStore.categoryCapped }}
               </div>
               <div
                 class="emo-label"
                 :style="{
                   color: emoLevelStore.color,
                 }">
-                {{ emoLabel }}
+                {{ emoLevelStore.label }}
               </div>
             </section>
             <section
@@ -74,8 +74,8 @@ Nevermind, I will try to help you." />
 <script setup lang="ts">
 import DonutChart from '@/components/DonutChart.vue';
 import MonoConsultCard from './components/MonoConsultCard.vue';
-import { computed, ref } from 'vue';
-import { useEmoLevelStore } from './stores';
+import { computed, ref, watch } from 'vue';
+import { useEmoLevelStore, useMonoConsultStore } from './stores';
 
 // ref
 
@@ -85,16 +85,6 @@ const emoLevelFileInputElem = ref<
 const isEmoLevelFileInputElemLocked = ref(false);
 
 // computed
-
-const emoCategory = computed(() => {
-  const category = emoLevelStore.category ?? 'emotion';
-  return category[0].toUpperCase() + category.slice(1);
-});
-
-const emoLabel = computed(() => {
-  const label = emoLevelStore.label ?? 'unknown';
-  return label[0].toUpperCase() + label.slice(1);
-});
 
 const emoLevelFileHeading = computed(() => {
   if (!isEmoLevelFileInputElemLocked.value) {
@@ -113,6 +103,18 @@ const emoLevelFileHeading = computed(() => {
 // store
 
 const emoLevelStore = useEmoLevelStore();
+const monoConsultStores: ReturnType<
+  typeof useMonoConsultStore
+>[] = [];
+
+// wather
+
+// watch(
+//   () => emoLevelStore.tick,
+//   (tick) => {
+//     if (tick === undefined)
+//   },
+// );
 
 // functions
 

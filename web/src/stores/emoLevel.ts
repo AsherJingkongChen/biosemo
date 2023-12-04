@@ -11,35 +11,55 @@ export const useEmoLevelStore = defineStore('emoLevel', {
     _tick: undefined as number | undefined,
   }),
   getters: {
-    category: (state) => state._category,
+    category(): 'stress' | 'emotion' {
+      if (
+        this._tick === undefined ||
+        this._category === undefined
+      ) {
+        return 'emotion';
+      }
+      return this._category;
+    },
+    categoryCapped(): string {
+      return (
+        this.category.charAt(0).toUpperCase() +
+        this.category.slice(1)
+      );
+    },
     color(): string {
       if (this._tick === undefined) {
-        return 'var(--color-border-hover)';
+        return 'var(--color-border)';
       }
       return percentColorMap_RYG(this.percent);
     },
     label() {
-      if (this._category === 'stress') {
-        if (this.percent < 25) return 'Relaxed';
-        if (this.percent < 50) return 'Neutral';
-        if (this.percent < 75) return 'Tense';
-        return 'Stressful';
+      if (
+        this._tick === undefined ||
+        this._category === undefined
+      ) {
+        return 'Unknown';
       }
-      return;
+      if (this.percent < 25) return 'Relaxed';
+      if (this.percent < 50) return 'Neutral';
+      if (this.percent < 75) return 'Tense';
+      return 'Stressful';
     },
     length: (state) => state._length,
     level: (state) => state._level,
-    smoothLevel: (state) => state._smoothLevel,
     percent: (state) => state._smoothLevel * 50,
     percentRounded(): number {
       return Math.round(this.percent);
     },
+    smoothLevel: (state) => state._smoothLevel,
+
+    // starts from 1
     tick: (state) => state._tick,
   },
   actions: {
     $reset() {
       // tick should be the first to reset
       this._tick = undefined;
+
       this._category = undefined;
       this._length = undefined;
       this._level = 0;
@@ -84,12 +104,11 @@ export const useEmoLevelStore = defineStore('emoLevel', {
       const decoder = new TextDecoder('utf-8');
 
       // moving window
-      let movingWindow: number[] = [];
+      const movingWindow: number[] = [];
       const movingWindowCap = 60;
 
       // read stream
-      this._tick = 0;
-      for (let done = false; !done; ) {
+      for (let done = false, tick = 1; !done; tick += 1) {
         const chunk = await reader.read();
         if (chunk.done) {
           done = true;
@@ -108,7 +127,7 @@ export const useEmoLevelStore = defineStore('emoLevel', {
             movingWindow.length;
 
           // add tick
-          this._tick += 1;
+          this._tick = tick;
         }
       }
     },
