@@ -1,6 +1,8 @@
 /* color palette from <https://github.com/vuejs/theme> */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
 
+$LINE_HEIGHT: 1.6;
+
 :root {
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
@@ -72,11 +74,6 @@
   --color-turquoise: #22aaaa;
 }
 
-/* typography */
-:root {
-  --line-height: 1.6;
-}
-
 *,
 *::before,
 *::after {
@@ -88,7 +85,7 @@
 body {
   color: var(--color-text);
   background: var(--color-background);
-  line-height: var(--line-height);
+  line-height: $LINE_HEIGHT;
   font-family:
     'Open Sans',
     Inter,

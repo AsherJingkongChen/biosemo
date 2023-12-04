@@ -54,16 +54,16 @@
         </section>
       </section>
       <section class="b-">
-        <div class="scroll-view">
-          <div class="scroll-target mono-consult-card-list">
+        <div class="mono-consult-card-list-scroller">
+          <div
+            class="mono-consult-card-list"
+            ref="listElem">
             <MonoConsultCard
-              v-for="(percent, index) in [29, 37, 53, 71, 97]"
+              v-for="(item, index) in monoConsultsStore"
               :key="index"
-              :percent="percent"
-              text="
-Ok, I will try to help you.
-Can you tell me what happened?
-Nevermind, I will try to help you." />
+              :percent="item.percent"
+              :text="item.text"
+              ref="" />
           </div>
         </div>
       </section>
@@ -75,7 +75,10 @@ Nevermind, I will try to help you." />
 import DonutChart from '@/components/DonutChart.vue';
 import MonoConsultCard from './components/MonoConsultCard.vue';
 import { computed, ref, watch } from 'vue';
-import { useEmoLevelStore, useMonoConsultStore } from './stores';
+import {
+  useEmoLevelStore,
+  useMonoConsultsStore,
+} from './stores';
 
 // ref
 
@@ -103,18 +106,77 @@ const emoLevelFileHeading = computed(() => {
 // store
 
 const emoLevelStore = useEmoLevelStore();
-const monoConsultStores: ReturnType<
-  typeof useMonoConsultStore
->[] = [];
+const monoConsultsStore = useMonoConsultsStore();
 
-// wather
+// watcher
+
+// interval in ticks
+const MONO_CONSULT_INTERVAL = 600;
+
+watch(
+  () => emoLevelStore.tick,
+  async (tick) => {
+    if (
+      tick === undefined ||
+      tick % MONO_CONSULT_INTERVAL !== 0
+    ) {
+      return;
+    }
+    await monoConsultsStore.push(emoLevelStore);
+  },
+);
+
+const listElem = ref<HTMLDivElement | undefined>();
+
+// let shouldScrollToBottom = false;
 
 // watch(
-//   () => emoLevelStore.tick,
-//   (tick) => {
-//     if (tick === undefined)
+//   () => monoConsultsStore.running,
+//   (running) => {
+//     if (listElem.value === undefined) {
+//       return;
+//     }
+//     if (running) {
+//       const a =
+//         listElem.value.scrollHeight - listElem.value.scrollTop;
+//       const b = listElem.value.clientHeight;
+//       shouldScrollToBottom = a <= b;
+//       return;
+//     }
+//     const a =
+//       listElem.value.scrollHeight - listElem.value.scrollTop;
+//     const b = listElem.value.clientHeight;
+//     console.log(a, b);
+//     if (a > b && shouldScrollToBottom) {
+//       listElem.value.scrollBy({
+//         behavior: 'smooth',
+//         top: a - b,
+//       });
+//     }
 //   },
 // );
+
+// const vAutoScrollDown = {
+//     // called before bound element's attributes
+//   // or event listeners are applied
+//   created(el, binding, vnode, prevVnode) {
+//     // see below for details on arguments
+//   },
+//   // called right before the element is inserted into the DOM.
+//   beforeMount(el, binding, vnode, prevVnode) {},
+//   // called when the bound element's parent component
+//   // and all its children are mounted.
+//   mounted(el, binding, vnode, prevVnode) {},
+//   // called before the parent component is updated
+//   beforeUpdate(el, binding, vnode, prevVnode) {},
+//   // called after the parent component and
+//   // all of its children have updated
+//   updated(el, binding, vnode, prevVnode) {},
+//   // called before the parent component is unmounted
+//   beforeUnmount(el, binding, vnode, prevVnode) {},
+//   // called when the parent component is unmounted
+//   unmounted(el, binding, vnode, prevVnode) {}
+// };
 
 // functions
 
@@ -129,6 +191,7 @@ async function onChangeEmoLevelFileInputElem() {
     throw new Error('The file input element is locked now');
   }
   isEmoLevelFileInputElemLocked.value = true;
+  monoConsultsStore.$reset();
 
   await emoLevelStore
     .getLevels(file)
@@ -138,14 +201,13 @@ async function onChangeEmoLevelFileInputElem() {
     .finally(() => {
       isEmoLevelFileInputElemLocked.value = false;
       emoLevelStore.$reset();
-      console.warn('emoLevelStore.$reset is disabled');
     });
 }
 </script>
 
 <style scoped lang="scss">
 @use 'sass:math';
-@import './assets/base.css';
+@import '@/assets/base.scss';
 
 .background {
   display: flex;
@@ -191,6 +253,10 @@ async function onChangeEmoLevelFileInputElem() {
     width: 100%;
     padding-block: 1.5em;
     .cabinet {
+      $BUTTON_PADDING_BLOCK: 0.25em;
+      $BUTTON_PADDING_INLINE: 1em;
+      $BUTTON_BORDER_RADIUS: 1em * $LINE_HEIGHT + 2 *
+        $BUTTON_PADDING_BLOCK;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -198,11 +264,6 @@ async function onChangeEmoLevelFileInputElem() {
       gap: 1.5em;
       position: relative;
       width: 100%;
-      $BUTTON_PADDING_BLOCK: 0.25em;
-      $BUTTON_PADDING_INLINE: 1em;
-      $BUTTON_BORDER_RADIUS: calc(
-        var(--line-height) * 1em + 2 * $BUTTON_PADDING_BLOCK
-      );
       text-align: center;
       .emo-status {
         $LABEL_TEXT_MAX_CHARS: 7 + 1;
@@ -272,17 +333,9 @@ async function onChangeEmoLevelFileInputElem() {
   align-items: center;
   position: relative;
   width: 100%;
-  .scroll-view {
-    display: flex;
-    flex-direction: column;
+  .mono-consult-card-list-scroller {
     position: relative;
     width: 100%;
-    .scroll-target {
-      position: relative;
-      width: 100%;
-      overflow-x: hidden;
-      overflow-y: scroll;
-    }
     ::-webkit-scrollbar {
       display: block;
       width: $BORDER_RADIUS;
@@ -297,13 +350,15 @@ async function onChangeEmoLevelFileInputElem() {
   }
   .mono-consult-card-list {
     $CHAT_CARD_PADDING: 1em;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
     position: relative;
-    min-height: calc(
-      var(--line-height) * 5em + 3 * $CHAT_CARD_PADDING + 4px
-    );
-    max-height: 50vh;
+    min-height: 1em * $LINE_HEIGHT + 3 * $CHAT_CARD_PADDING;
+    width: 100%;
+    max-height: 30vh;
     background-color: var(--color-background-soft);
     border: thin solid var(--color-border);
     border-radius: $BORDER_RADIUS;

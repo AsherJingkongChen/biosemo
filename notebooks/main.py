@@ -94,7 +94,8 @@ import utils.hrv_feature_extraction as hfe
 
 SAMPLE_WINDOW_SIZE = 400
 INFERENCE_WINDOW_SIZE = 250
-DELAY_IN_SECONDS = 0.005
+INFER_DELAY_IN_SECONDS = 0.005
+CHATBOT_DELAY_IN_SECONDS = 0.05
 random.seed(123)
 load_dotenv()
 
@@ -152,7 +153,7 @@ async def stress_levels(rq: StressLevelsRequest):
           row['prediction_score_2'] * 2
         )
         yield f'{weighted_level:.4f}\n'
-        await sleep(DELAY_IN_SECONDS)
+        await sleep(INFER_DELAY_IN_SECONDS)
 
   rr_intervals = np.array(rq.rr_intervals)
 
@@ -171,18 +172,18 @@ async def stress_levels(rq: StressLevelsRequest):
   response_class=StreamingResponse,
 )
 async def stress_mono_consult(rq: StressMonoConsultRequest):
-  def _iter_openai_chat():
+  async def _iter_openai_chat():
     client = OpenAI()
     response = client.chat.completions.create(
       model='gpt-3.5-turbo',
       messages=[
         {
           'role': 'system',
-          'content': 'Greeting bot',
+          'content': 'Greeting bot, says Hi with the number.',
         },
         {
           'role': 'user',
-          'content': 'Hello?',
+          'content': f'Hello? I am number {rq.percent}.',
         },
       ],
       stream=True,
@@ -191,6 +192,7 @@ async def stress_mono_consult(rq: StressMonoConsultRequest):
       message = chunk.choices[0].delta.content
       if message:
         yield message
+        await sleep(CHATBOT_DELAY_IN_SECONDS)
 
   return StreamingResponse(
     content=_iter_openai_chat(),
@@ -230,5 +232,4 @@ Server(Config(
 # %%
 # clean up
 exit(0)
-
 

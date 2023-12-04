@@ -28,6 +28,8 @@ const markedText = computed(() => {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/base.scss';
+
 .mono-consult-card-item {
   display: flex;
   flex-direction: row;
@@ -37,7 +39,9 @@ const markedText = computed(() => {
   padding: 1em;
   .emo-level-ribbon {
     position: relative;
+    min-width: 0.25em;
     width: 0.25em;
+    min-height: 1em * $LINE_HEIGHT;
     background: linear-gradient(
       to bottom,
       var(--color-border) 0em,

@@ -46,6 +46,8 @@ export const useEmoLevelStore = defineStore('emoLevel', {
     },
     length: (state) => state._length,
     level: (state) => state._level,
+
+    // already smoothed
     percent: (state) => state._smoothLevel * 50,
     percentRounded(): number {
       return Math.round(this.percent);
