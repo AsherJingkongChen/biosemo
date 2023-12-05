@@ -1,8 +1,6 @@
 The dataset may support studies on mental health and psychophysiology 
 related to other anxiety disorders, such as fear of flying, social phobia 
 and posttraumatic stress disorder.
-該資料集可能支持與其他焦慮症相關的心理健康和心理生理學研究，
-例如飛行恐懼、社交恐懼症和創傷後壓力症候群。
 
 The focus of this research is the usage of physiological responses for 
 anxiety level detection. The Autonomic Nervous System (ANS) produces 
@@ -10,9 +8,6 @@ physiological responses to regulate body functions, such as heart activity.
 Important physiological responses related to stress and anxiety can be 
 derived from electrocardiogram (ECG), electrodermal activity (EDA), 
 and respiration (RSP) signals [18].
-這項研究的重點是利用生理反應來檢測焦慮程度。
-自主神經系統 (ANS) 產生生理反應來調節身體功能，例如心臟活動。
-與壓力和焦慮相關的重要生理反應可以源自心電圖（ECG）、皮膚電活動（EDA）和呼吸（RSP）訊號[ 18 ]。
 
 BitalinoBR.txt:
   Respiration in % (column 1, indicates the deflection of the piezo sensor 

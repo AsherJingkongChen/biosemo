@@ -9,17 +9,6 @@ interruption:
   Some emails were relevant to their tasks and the participant 
   was requested to take specific actions while others were 
   just irrelevant to their tasks.
-無壓力：
-   讓受試者在最大需要的時間內完成任務
-   45 分鐘，但他們不知道任務的最長持續時間。
-時間壓力：
-   在此期間，完成任務的時間減少到了2/3
-   參與者在中性條件下花費的時間。
-中斷：
-   參與者在分配任務的過程中收到了八封電子郵件。
-   一些電子郵件與他們的任務和參與者相關
-   被要求採取具體行動，而其他行動則
-   只是與他們的任務無關。
 
 Based on the provided information, here is the interpretation 
 of the 36 feature names in a bio dataset:
