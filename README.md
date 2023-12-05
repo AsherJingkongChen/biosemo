@@ -1,5 +1,19 @@
 # Individual Project: Emotion Classification based on Biosignal data
 
+<!-- ## Gallery
+
+![Web: ]()
+![Web: ]()
+![Web: ]()
+
+![Notebook: ]()
+![Notebook: ]()
+![Notebook: ]()
+
+![Design: ]()
+![Design: ]()
+![Design: ]() -->
+
 ## Workflow
 
 ### Preparation
@@ -18,6 +32,11 @@ Open your Jupyter environment and run them in this order:
 
 1. `notebooks/preprocess.ipynb`
 2. `notebooks/analyze.ipynb`
+
+## Documentations
+- Frameworks: [link](./docs/markdown/frameworks/en-US.md) | [連結](./docs/markdown/frameworks/zh-TW.md)
+- Dataflow: link | 連結
+- Designs: link | 連結
 
 ## Datasets
 
