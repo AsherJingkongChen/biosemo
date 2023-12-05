@@ -171,11 +171,17 @@ load_dotenv()
 
 class StressLevelsRequest(BaseModel):
   rr_intervals: list[float] = Field(
+    alias='rrIntervals',
     examples=[random.choices(range(700, 900), k=60)],
     min_items=60,
   )
 
 class StressMonoCounselRequest(BaseModel):
+  high_percent: int = Field(
+    alias='highPercent',
+    examples=[random.randint(0, 100)],
+    ge=0, le=100,
+  )
   percent: int = Field(
     examples=[random.randint(0, 100)],
     ge=0, le=100,
@@ -241,6 +247,7 @@ async def stress_levels(rq: StressLevelsRequest):
 )
 async def stress_mono_counsel(rq: StressMonoCounselRequest):
   async def _iter_openai_chat():
+    # rq.high_percent
     client = OpenAI()
     response = client.chat.completions.create(
       model='gpt-3.5-turbo',
@@ -255,6 +262,7 @@ async def stress_mono_counsel(rq: StressMonoCounselRequest):
         },
       ],
       stream=True,
+      temperature=0.75,
     )
     for chunk in response:
       message = chunk.choices[0].delta.content
