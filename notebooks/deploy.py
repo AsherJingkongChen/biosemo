@@ -161,9 +161,9 @@ import utils.hrv_feature_extraction as hfe
 # define constants
 
 SAMPLE_WINDOW_SIZE = 400
-INFERENCE_WINDOW_SIZE = 100
-INFER_DELAY_IN_SECONDS = 0.005
-CHATBOT_DELAY_IN_SECONDS = 0
+INFERENCE_WINDOW_SIZE = 500
+INFERENCE_DELAY_IN_SECONDS = 0.005
+CHATBOT_DELAY_IN_SECONDS = 0.001
 random.seed(123)
 load_dotenv()
 
@@ -227,7 +227,7 @@ async def stress_levels(rq: StressLevelsRequest):
           row['prediction_score_2'] * 2
         )
         yield f'{weighted_level:.4f}\n'
-        await sleep(INFER_DELAY_IN_SECONDS)
+        await sleep(INFERENCE_DELAY_IN_SECONDS)
 
   rr_intervals = np.array(rq.rr_intervals)
 
@@ -248,9 +248,11 @@ async def stress_levels(rq: StressLevelsRequest):
 async def stress_mono_counsel(rq: StressMonoCounselRequest):
   async def _iter_openai_chat():
     LANG = 'zh-TW, 繁體中文'
+
     # normalize data
     high_percent = rq.high_percent // 5 * 5
     percent = rq.percent // 5 * 5
+    print(rq, file=sys.stderr)
 
     # fetch OpenAI API
     client = OpenAI()
@@ -264,32 +266,31 @@ async def stress_mono_counsel(rq: StressMonoCounselRequest):
 Assistant, you can only reply, speak and talk in {LANG}.
 You act as a stress counselor in a therapy session.
 A user may be stressful, tense or relaxed.
-A user is allowed to provide you the critical statistical data recorded in a period.
+A user will provide you the critical statistical data recorded in a period.
 Your important task is to give heart-warming and careful suggestions to the user based on their statistics.
 
 The statistics include:
-1. The stress level
-2. The highly stressful time proportion in percentage.
+1. The stress level in percentage.
+2. The stressful time proportion.
 
 Remember the guidelines:
 1. Elaborate your speech and answer in a few of short words and phrases.
-2. Do not mention the statistics because the user has already known that.
+2. Forget the statistics when talk to the user, just don't mention them.
 3. Do not tell the user to keep in mind that you are not an AI language model and not a substitute to therapy.
-This is important to everyone,\
- because the user will feel bad and even annoyed that they aren't getting actual help.
-4. Better to warn the user if too stressful.
+   This is important because the user will feel bad and even annoyed that they aren't getting actual help.
+4. Warn the user if the stressful time proportion is very high (greater than 80%).
 
-Finally, if you have to do so for legitimate purposes, say "Never mind." instead.''',
+Finally, you have to follow the guidelines and give suggestions to the user.''',
         },
         {
           'role': 'user',
           'content': '''\
 My stress level is 20%,\
- and I have 5% time in highly stressful condition.''',
+ and I have 5% time in stressful condition.''',
         },
         {
           'role': 'assistant',
-          'content': '''
+          'content': '''\
 I'm glad to hear that your overall stress level is relatively low.
 That's a positive sign.
 Focus on maintaining the habits that contribute to your well-being,\
@@ -300,11 +301,12 @@ Keep up the good work!''',
           'role': 'user',
           'content': f'''\
 My stress level is {percent}%,\
- and I have {high_percent}% time in highly stressful condition. Reply me in {LANG}.''',
+ and I have {high_percent}% time in stressful condition. Reply me in {LANG}.''',
         },
       ],
       stream=True,
-      temperature=1,
+      temperature=0.25,
+      max_tokens=1000,
     )
     for chunk in response:
       message = chunk.choices[0].delta.content

@@ -81,7 +81,6 @@ import {
   useMonoCounselsStore,
 } from '@/stores';
 import { vAutoScrollDown } from '@/utils';
-import { EmoLabelThresholdMap } from '@/stores/emoLevel';
 
 // ref
 
@@ -114,7 +113,7 @@ const monoCounselsStore = useMonoCounselsStore();
 // watcher
 
 // interval in ticks
-const MONO_COUNSEL_INTERVAL = 800;
+const MONO_COUNSEL_INTERVAL = 1000;
 let emoPercentWindow: number[] = [];
 
 watch(
@@ -130,19 +129,13 @@ watch(
         const emoPercentMean =
           emoPercentWindow.reduce((acc, cur) => acc + cur, 0) /
           emoPercentWindow.length;
-        const emoPercentMeanWeighted =
-          emoPercentMean * 0.85 + emoLevelStore.percent * 0.15;
-
-        const emoHighPercentCount = emoPercentWindow.filter(
-          (p) => p >= EmoLabelThresholdMap['Stressful'],
-        ).length;
-        const emoHighPercent =
-          (emoHighPercentCount / emoPercentWindow.length) * 100;
+        const emoPercentMeanExtended =
+          emoLevelStore.percent * 0.25 + emoPercentMean * 0.75;
 
         await monoCounselsStore.push({
           category: emoLevelStore.category,
-          highPercent: emoHighPercent,
-          percent: emoPercentMeanWeighted,
+          highPercent: emoLevelStore.highPercent,
+          percent: emoPercentMeanExtended,
         });
       }
     } else {
@@ -249,6 +242,7 @@ async function onChangeEmoLevelFileInputElem() {
         position: relative;
         border: thin solid var(--color-border);
         border-radius: $BUTTON_BORDER_RADIUS;
+        background-color: var(--color-background-soft);
         > * {
           padding: $BUTTON_PADDING_BLOCK $BUTTON_PADDING_INLINE;
           min-height: $BUTTON_BORDER_RADIUS;
@@ -282,7 +276,7 @@ async function onChangeEmoLevelFileInputElem() {
           * {
             cursor: pointer;
           }
-          background-color: var(--color-turquoise);
+          background-color: var(--vt-c-turquoise);
           color: var(--color-background);
         }
         &.locked {

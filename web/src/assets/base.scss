@@ -8,16 +8,17 @@ $LINE_HEIGHT: 1.6;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  --vt-c-black: #181828;
+  --vt-c-black-soft: #222232;
+  --vt-c-black-mute: #282838;
 
   --vt-c-indigo: #2c3e50;
+  --vt-c-turquoise: #22aaaa;
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  --vt-c-divider-dark-1: rgba(84, 84, 90, 0.65);
+  --vt-c-divider-dark-2: rgba(84, 84, 90, 0.48);
 
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
@@ -26,52 +27,32 @@ $LINE_HEIGHT: 1.6;
 }
 
 /* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background: var(--vt-c-white);
+    --color-background-soft: var(--vt-c-white-soft);
+    --color-background-mute: var(--vt-c-white-mute);
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+    --color-border: var(--vt-c-divider-light-2);
+    --color-border-hover: var(--vt-c-divider-light-1);
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-2);
-
-  --section-gap: 160px;
+    --color-heading: var(--vt-c-text-light-1);
+    --color-text: var(--vt-c-text-light-2);
+  }
 }
 
-/* @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(
-      --vt-c-black
-    );
-    --color-background-soft: var(
-      --vt-c-black-soft
-    );
-    --color-background-mute: var(
-      --vt-c-black-mute
-    );
+    --color-background: var(--vt-c-black);
+    --color-background-soft: var(--vt-c-black-soft);
+    --color-background-mute: var(--vt-c-black-mute);
 
-    --color-border: var(
-      --vt-c-divider-dark-2
-    );
-    --color-border-hover: var(
-      --vt-c-divider-dark-1
-    );
+    --color-border: var(--vt-c-divider-dark-2);
+    --color-border-hover: var(--vt-c-divider-dark-1);
 
-    --color-heading: var(
-      --vt-c-text-dark-1
-    );
-    --color-text: var(
-      --vt-c-text-dark-2
-    );
+    --color-heading: var(--vt-c-text-dark-1);
+    --color-text: var(--vt-c-text-dark-2);
   }
-} */
-
-/* miscellaneous colors */
-:root {
-  --color-azure: #007acc;
-  --color-turquoise: #22aaaa;
 }
 
 *,

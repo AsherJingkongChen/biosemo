@@ -2,24 +2,19 @@ import { percentColorMap_RYG } from '@/utils';
 import { defineStore } from 'pinia';
 import { fetchUtil } from '@/utils';
 
+const defaultState = () => ({
+  _category: undefined as EmoCategoryList | undefined,
+  _highPercent: 0,
+  _length: undefined as number | undefined,
+  _level: 0,
+  _smoothLevel: 0,
+  _tick: undefined as number | undefined,
+});
+
 export const useEmoLevelStore = defineStore('emoLevel', {
-  state: () => ({
-    _category: undefined as 'stress' | undefined,
-    _length: undefined as number | undefined,
-    _level: 0,
-    _smoothLevel: 0,
-    _tick: undefined as number | undefined,
-  }),
+  state: defaultState,
   getters: {
-    category(): 'stress' | 'emotion' {
-      if (
-        this._tick === undefined ||
-        this._category === undefined
-      ) {
-        return 'emotion';
-      }
-      return this._category;
-    },
+    category: (state) => state._category ?? 'emotion',
     categoryCapped(): string {
       return (
         this.category.charAt(0).toUpperCase() +
@@ -32,35 +27,44 @@ export const useEmoLevelStore = defineStore('emoLevel', {
       }
       return percentColorMap_RYG(this.percent);
     },
-    label() {
+    label(): string {
       if (
         this._tick === undefined ||
         this._category === undefined
       ) {
         return 'Unknown';
       }
-      if (this.percent >= EmoLabelThresholdMap['Stressful']) {
-        return 'Stressful';
-      }
-      if (this.percent >= EmoLabelThresholdMap['Tense']) {
-        return 'Tense';
-      }
-      if (this.percent >= EmoLabelThresholdMap['Neutral']) {
-        return 'Neutral';
-      }
-      if (this.percent >= EmoLabelThresholdMap['Relaxed']) {
-        return 'Relaxed';
+      for (const [label, threshold] of Object.entries(
+        EmoLabelThresholdMap[this._category],
+      )) {
+        if (this.percent >= threshold) {
+          return label;
+        }
       }
       return 'Unknown';
     },
     length: (state) => state._length,
+
+    // predicted level
     level: (state) => state._level,
 
-    // already smoothed
-    percent: (state) => state._smoothLevel * 50,
+    // high level percentage by moving window mean
+    highPercent: (state) => state._highPercent,
+
+    // smoothed level in percentage
+    percent(): number {
+      return (
+        this._smoothLevel *
+        EmoLevelPercentFactorMap[this.category]
+      );
+    },
+
+    // rounded smoothed level in percentage
     percentRounded(): number {
       return Math.round(this.percent);
     },
+
+    // smoothed level by moving window mean
     smoothLevel: (state) => state._smoothLevel,
 
     // starts from 1
@@ -71,10 +75,7 @@ export const useEmoLevelStore = defineStore('emoLevel', {
       // tick should be the first to reset
       this._tick = undefined;
 
-      this._category = undefined;
-      this._length = undefined;
-      this._level = 0;
-      this._smoothLevel = 0;
+      this.$patch(defaultState());
     },
     async getLevels(file: File) {
       this.$reset();
@@ -82,8 +83,10 @@ export const useEmoLevelStore = defineStore('emoLevel', {
       // parse file
       const body = await file.text();
       const { category } = JSON.parse(body);
-      if (category === undefined) {
-        throw new Error('The emolevel file has no category');
+      if (!EmoCategoryList.includes(category)) {
+        throw new Error(
+          'The emotion level file has no valid category',
+        );
       }
 
       // fetch API
@@ -116,7 +119,11 @@ export const useEmoLevelStore = defineStore('emoLevel', {
 
       // moving window
       const movingWindow: number[] = [];
-      const movingWindowCap = 60;
+      const movingWindowCap = 100;
+      const highLevelThreshold =
+        80 / EmoLevelPercentFactorMap[this.category];
+      const isHighLevel = (level: number) =>
+        level >= highLevelThreshold;
 
       // read stream
       for (let done = false, tick = 1; !done; tick += 1) {
@@ -137,6 +144,12 @@ export const useEmoLevelStore = defineStore('emoLevel', {
             movingWindow.reduce((acc, curr) => acc + curr, 0) /
             movingWindow.length;
 
+          // calculate the high level percentage in window
+          this._highPercent =
+            (movingWindow.filter(isHighLevel).length /
+              movingWindow.length) *
+            100;
+
           // add tick
           this._tick = tick;
         }
@@ -145,9 +158,21 @@ export const useEmoLevelStore = defineStore('emoLevel', {
   },
 });
 
-export const EmoLabelThresholdMap = {
-  Stressful: 75,
-  Tense: 50,
-  Neutral: 25,
-  Relaxed: 0,
+const EmoCategoryList = ['stress'] as const;
+
+type EmoCategoryList = (typeof EmoCategoryList)[number];
+
+const EmoLabelThresholdMap = {
+  emotion: {},
+  stress: {
+    Stressful: 75,
+    Tense: 50,
+    Neutral: 25,
+    Relaxed: 0,
+  } as const,
+} as const;
+
+const EmoLevelPercentFactorMap = {
+  emotion: 1,
+  stress: 50,
 } as const;
