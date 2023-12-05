@@ -7,10 +7,10 @@
 *.swp
 
 dist
+logs.log
 node_modules
 __pycache__
 
 /datasets/swell/final/*.csv
 /datasets/swell/raw
 /datasets/ecg-spider-clip
-/notebooks/logs.log

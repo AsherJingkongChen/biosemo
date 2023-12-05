@@ -1,15 +1,26 @@
 # %%
+'''
+Usage: python3 deploy.py [-v|--verbose] [-q|--quiet]
+'''
+
+# %%
 # global parameters
 DATA_DIR = '../datasets/swell/final'
 TEST_DATA_NAME = 'test'
 API_HOST = 'localhost'
 API_PORT = 8080
-IS_VERBOSE = False
+IS_VERBOSE = True
 
 # %%
 # setup the logging
 import os
 import sys
+
+if len(sys.argv) > 1:
+  if {'-v', '--verbose'}.intersection(sys.argv[1:]):
+    IS_VERBOSE = True
+  elif {'-q', '--quiet'}.intersection(sys.argv[1:]):
+    IS_VERBOSE = False
 
 if not IS_VERBOSE:
   sys.stdout = open(os.devnull, 'w')
@@ -18,6 +29,7 @@ if not IS_VERBOSE:
 # %%
 # install dependencies
 import subprocess
+from pathlib import Path
 
 if IS_VERBOSE:
   subprocess_fd_kwargs = {}
@@ -31,7 +43,7 @@ subprocess.call(
   args=[
     sys.executable, '-m', 'pip',
     'install', '-q',
-    '-r', 'requirements.txt',
+    '-r', Path(__file__).with_name('requirements.txt'),
   ],
   **subprocess_fd_kwargs,
 )
@@ -78,16 +90,21 @@ DATA = {
 }
 
 for data_name in DATA.keys():
-  data_path = Path(DATA_DIR).joinpath(data_name)
+  abs_data_path = (
+    Path(__file__).parent
+      .joinpath(DATA_DIR)
+      .joinpath(data_name)
+  )
+  rel_data_path = Path(DATA_DIR).joinpath(data_name)
   # extract the compressed data files
-  ZipFile(data_path.with_suffix('.zip'), 'r').extract(
-    str(data_path.with_suffix('.csv')), '..'
+  ZipFile(abs_data_path.with_suffix('.zip'), 'r').extract(
+    str(rel_data_path.with_suffix('.csv')), '..'
   )
   print(f'Data file "{data_name}" has been extracted successfully')
   # load the data
   print(f'Loading data file "{data_name}"')
   DATA[data_name] = get_data(
-    dataset=f'{data_path}',
+    dataset=rel_data_path,
     verbose=IS_VERBOSE,
   )
 
@@ -106,7 +123,10 @@ for data_name in DATA.keys():
 from pathlib import Path
 from pycaret.classification import load_experiment
 
-model_dir = Path(f'../models/{TEST_DATA_NAME}')
+model_dir = (
+  Path(__file__).parent
+    .joinpath(f'../models/{TEST_DATA_NAME}')
+)
 
 exp = load_experiment(
   path_or_file=model_dir.joinpath('experiment.pkl'),
