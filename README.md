@@ -34,6 +34,7 @@ Open your Jupyter environment and run them in this order:
 2. `notebooks/analyze.ipynb`
 
 ## Documentations
+- Algorithms: link | [連結](./docs/markdown/algorithms/zh-TW.md)
 - Frameworks: [link](./docs/markdown/frameworks/en-US.md) | [連結](./docs/markdown/frameworks/zh-TW.md)
 - Dataflow: link | [連結](./docs/markdown/dataflow/zh-TW.md)
 - Designs: link | 連結
