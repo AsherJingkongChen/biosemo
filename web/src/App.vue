@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import DonutChart from '@/components/DonutChart.vue';
 import MonoConsultCard from '@/components/MonoConsultCard.vue';
-import { computed, ref, watch, type Directive } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   useEmoLevelStore,
   useMonoConsultsStore,
@@ -117,43 +117,42 @@ const MONO_CONSULT_INTERVAL = 600;
 
 watch(
   () => emoLevelStore.tick,
-  async (tick) => {
+  (tick) => {
     if (
-      tick === undefined ||
-      tick % MONO_CONSULT_INTERVAL !== 0
+      tick !== undefined &&
+      tick % MONO_CONSULT_INTERVAL === 0
     ) {
-      return;
+      monoConsultsStore.push(emoLevelStore);
     }
-    await monoConsultsStore.push(emoLevelStore);
   },
 );
 
-const listElem = ref<HTMLDivElement | undefined>();
-
-// functions
+// callbacks
 
 async function onChangeEmoLevelFileInputElem() {
   const file = emoLevelFileInputElem?.value?.files?.[0];
-  if (!file) {
-    console.debug('Cancelled uploading file');
-    return;
-  }
+  if (file) {
+    if (isEmoLevelFileInputElemLocked.value) {
+      throw new Error('The file input element is locked now');
+    }
 
-  if (isEmoLevelFileInputElemLocked.value) {
-    throw new Error('The file input element is locked now');
-  }
-  isEmoLevelFileInputElemLocked.value = true;
-  monoConsultsStore.$reset();
+    // init state
+    isEmoLevelFileInputElemLocked.value = true;
+    monoConsultsStore.$reset();
 
-  await emoLevelStore
-    .getLevels(file)
-    .catch((e) => {
-      alert(`Failed to get emotion levels from the file:\n${e}`);
-    })
-    .finally(() => {
-      isEmoLevelFileInputElemLocked.value = false;
-      emoLevelStore.$reset();
-    });
+    emoLevelStore
+      .getLevels(file)
+      .catch((e) => {
+        alert(
+          `Failed to get emotion levels from the file:\n${e}`,
+        );
+      })
+      .finally(() => {
+        // reset state
+        isEmoLevelFileInputElemLocked.value = false;
+        emoLevelStore.$reset();
+      });
+  }
 }
 </script>
 
@@ -310,7 +309,7 @@ async function onChangeEmoLevelFileInputElem() {
     position: relative;
     min-height: 1em * $LINE_HEIGHT + 3 * $CHAT_CARD_PADDING;
     width: 100%;
-    max-height: 30vh;
+    max-height: 50vh;
     background-color: var(--color-background-soft);
     border: thin solid var(--color-border);
     border-radius: $BORDER_RADIUS;

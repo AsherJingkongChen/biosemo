@@ -1,9 +1,8 @@
-
 /**
  * Auto Scroll Down - Vanilla JS
  */
 export function useAutoScrollDown() {
-  let hadScrolledToBottom = false;
+  let hadScrolledToBottom = true;
   const hasScrolledToBottom = (target: Element): boolean => {
     return (
       target.clientHeight + target.clientTop + target.scrollTop >
@@ -13,9 +12,6 @@ export function useAutoScrollDown() {
   const onScrollTarget = ({ target }: Event): void => {
     if (target instanceof Element) {
       hadScrolledToBottom = hasScrolledToBottom(target);
-      if (hadScrolledToBottom) {
-        console.log('Scrolled to bottom');
-      }
     }
   };
   const scrollToBottomIfNeeded = (target: Element): void => {
