@@ -11,7 +11,6 @@ const defaultState = () => ({
         "Let's start this journey together!",
     },
   ],
-  _running: false,
 });
 
 export const useMonoCounselsStore = defineStore(
@@ -20,7 +19,6 @@ export const useMonoCounselsStore = defineStore(
     state: defaultState,
     getters: {
       length: (state) => state._items.length,
-      running: (state) => state._running,
     },
     actions: {
       $reset() {
@@ -28,17 +26,18 @@ export const useMonoCounselsStore = defineStore(
       },
       async push({
         category,
+        highPercent,
         percent,
       }: {
         category: string;
+        highPercent: number;
         percent: number;
       }) {
-        this._running = true;
-
         // fetch API
         const response = await fetchUtil(
           `/${category}/counsel/mono`,
           JSON.stringify({
+            highPercent,
             percent,
           }),
         );
@@ -71,9 +70,6 @@ export const useMonoCounselsStore = defineStore(
             item.text += decoder.decode(chunk.value);
           }
         }
-
-        // done
-        this._running = false;
       },
       [Symbol.iterator]() {
         return this._items.values();

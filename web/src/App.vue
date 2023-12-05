@@ -81,6 +81,7 @@ import {
   useMonoCounselsStore,
 } from '@/stores';
 import { vAutoScrollDown } from '@/utils';
+import { EmoLabelThresholdMap } from '@/stores/emoLevel';
 
 // ref
 
@@ -113,16 +114,39 @@ const monoCounselsStore = useMonoCounselsStore();
 // watcher
 
 // interval in ticks
-const MONO_Counsel_INTERVAL = 600;
+const MONO_COUNSEL_INTERVAL = 800;
+let emoPercentWindow: number[] = [];
 
 watch(
   () => emoLevelStore.tick,
-  (tick) => {
-    if (
-      tick !== undefined &&
-      tick % MONO_Counsel_INTERVAL === 0
-    ) {
-      monoCounselsStore.push(emoLevelStore);
+  async (tick) => {
+    if (tick !== undefined) {
+      emoPercentWindow.push(emoLevelStore.percent);
+      if (emoPercentWindow.length > MONO_COUNSEL_INTERVAL) {
+        emoPercentWindow.shift();
+      }
+
+      if (tick % MONO_COUNSEL_INTERVAL === 0) {
+        const emoPercentMean =
+          emoPercentWindow.reduce((acc, cur) => acc + cur, 0) /
+          emoPercentWindow.length;
+        const emoPercentMeanWeighted =
+          emoPercentMean * 0.85 + emoLevelStore.percent * 0.15;
+
+        const emoHighPercentCount = emoPercentWindow.filter(
+          (p) => p >= EmoLabelThresholdMap['Stressful'],
+        ).length;
+        const emoHighPercent =
+          (emoHighPercentCount / emoPercentWindow.length) * 100;
+
+        await monoCounselsStore.push({
+          category: emoLevelStore.category,
+          highPercent: emoHighPercent,
+          percent: emoPercentMeanWeighted,
+        });
+      }
+    } else {
+      emoPercentWindow = [];
     }
   },
 );
@@ -264,7 +288,7 @@ async function onChangeEmoLevelFileInputElem() {
         &.locked {
           &,
           * {
-            cursor: wait;
+            cursor: not-allowed;
           }
           background-color: var(--color-border);
           color: var(--color-heading);
@@ -285,6 +309,9 @@ async function onChangeEmoLevelFileInputElem() {
   position: relative;
   width: 100%;
   .mono-counsel-card-list-scroller {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     width: 100%;
     ::-webkit-scrollbar {
@@ -307,13 +334,17 @@ async function onChangeEmoLevelFileInputElem() {
     display: flex;
     flex-direction: column;
     position: relative;
-    min-height: 1em * $LINE_HEIGHT + 3 * $CHAT_CARD_PADDING;
-    width: 100%;
-    max-height: 50vh;
+    min-height: 35vh;
+    width: 85%;
+    max-height: 35vh;
     background-color: var(--color-background-soft);
     border: thin solid var(--color-border);
     border-radius: $BORDER_RADIUS;
     padding: math.div($CHAT_CARD_PADDING, 2);
+    // .mono-counsel-card-item {
+    //   position: relative;
+    //   width: 100%;
+    // }
   }
 }
 </style>

@@ -39,10 +39,19 @@ export const useEmoLevelStore = defineStore('emoLevel', {
       ) {
         return 'Unknown';
       }
-      if (this.percent < 25) return 'Relaxed';
-      if (this.percent < 50) return 'Neutral';
-      if (this.percent < 75) return 'Tense';
-      return 'Stressful';
+      if (this.percent >= EmoLabelThresholdMap['Stressful']) {
+        return 'Stressful';
+      }
+      if (this.percent >= EmoLabelThresholdMap['Tense']) {
+        return 'Tense';
+      }
+      if (this.percent >= EmoLabelThresholdMap['Neutral']) {
+        return 'Neutral';
+      }
+      if (this.percent >= EmoLabelThresholdMap['Relaxed']) {
+        return 'Relaxed';
+      }
+      return 'Unknown';
     },
     length: (state) => state._length,
     level: (state) => state._level,
@@ -135,3 +144,10 @@ export const useEmoLevelStore = defineStore('emoLevel', {
     },
   },
 });
+
+export const EmoLabelThresholdMap = {
+  Stressful: 75,
+  Tense: 50,
+  Neutral: 25,
+  Relaxed: 0,
+} as const;

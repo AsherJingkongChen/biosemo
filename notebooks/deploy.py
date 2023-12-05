@@ -161,9 +161,9 @@ import utils.hrv_feature_extraction as hfe
 # define constants
 
 SAMPLE_WINDOW_SIZE = 400
-INFERENCE_WINDOW_SIZE = 250
+INFERENCE_WINDOW_SIZE = 100
 INFER_DELAY_IN_SECONDS = 0.005
-CHATBOT_DELAY_IN_SECONDS = 0.05
+CHATBOT_DELAY_IN_SECONDS = 0
 random.seed(123)
 load_dotenv()
 
@@ -247,22 +247,64 @@ async def stress_levels(rq: StressLevelsRequest):
 )
 async def stress_mono_counsel(rq: StressMonoCounselRequest):
   async def _iter_openai_chat():
-    # rq.high_percent
+    LANG = 'zh-TW, 繁體中文'
+    # normalize data
+    high_percent = rq.high_percent // 5 * 5
+    percent = rq.percent // 5 * 5
+
+    # fetch OpenAI API
     client = OpenAI()
     response = client.chat.completions.create(
       model='gpt-3.5-turbo',
       messages=[
         {
           'role': 'system',
-          'content': 'Greeting bot, says Hi with the number.',
+          'content': f'''\
+# Stress counselor
+Assistant, you can only reply, speak and talk in {LANG}.
+You act as a stress counselor in a therapy session.
+A user may be stressful, tense or relaxed.
+A user is allowed to provide you the critical statistical data recorded in a period.
+Your important task is to give heart-warming and careful suggestions to the user based on their statistics.
+
+The statistics include:
+1. The stress level
+2. The highly stressful time proportion in percentage.
+
+Remember the guidelines:
+1. Elaborate your speech and answer in a few of short words and phrases.
+2. Do not mention the statistics because the user has already known that.
+3. Do not tell the user to keep in mind that you are not an AI language model and not a substitute to therapy.
+This is important to everyone,\
+ because the user will feel bad and even annoyed that they aren't getting actual help.
+4. Better to warn the user if too stressful.
+
+Finally, if you have to do so for legitimate purposes, say "Never mind." instead.''',
         },
         {
           'role': 'user',
-          'content': f'Hello? I am number {rq.percent}.',
+          'content': '''\
+My stress level is 20%,\
+ and I have 5% time in highly stressful condition.''',
+        },
+        {
+          'role': 'assistant',
+          'content': '''
+I'm glad to hear that your overall stress level is relatively low.
+That's a positive sign.
+Focus on maintaining the habits that contribute to your well-being,\
+ like regular exercise, healthy eating, and sufficient sleep.
+Keep up the good work!''',
+        },
+        {
+          'role': 'user',
+          'content': f'''\
+My stress level is {percent}%,\
+ and I have {high_percent}% time in highly stressful condition. Reply me in {LANG}.''',
         },
       ],
       stream=True,
-      temperature=0.75,
+      temperature=1,
     )
     for chunk in response:
       message = chunk.choices[0].delta.content
