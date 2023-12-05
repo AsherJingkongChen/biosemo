@@ -54,13 +54,13 @@
         </section>
       </section>
       <section class="b-">
-        <div class="mono-consult-card-list-scroller">
+        <div class="mono-counsel-card-list-scroller">
           <div
-            class="mono-consult-card-list"
+            class="mono-counsel-card-list"
             ref="listElem"
             v-auto-scroll-down>
-            <MonoConsultCard
-              v-for="(item, index) in monoConsultsStore"
+            <MonoCounselCard
+              v-for="(item, index) in monoCounselsStore"
               :key="index"
               :percent="item.percent"
               :text="item.text"
@@ -74,11 +74,11 @@
 
 <script setup lang="ts">
 import DonutChart from '@/components/DonutChart.vue';
-import MonoConsultCard from '@/components/MonoConsultCard.vue';
+import MonoCounselCard from '@/components/MonoCounselCard.vue';
 import { computed, ref, watch } from 'vue';
 import {
   useEmoLevelStore,
-  useMonoConsultsStore,
+  useMonoCounselsStore,
 } from '@/stores';
 import { vAutoScrollDown } from '@/utils';
 
@@ -108,21 +108,21 @@ const emoLevelFileHeading = computed(() => {
 // store
 
 const emoLevelStore = useEmoLevelStore();
-const monoConsultsStore = useMonoConsultsStore();
+const monoCounselsStore = useMonoCounselsStore();
 
 // watcher
 
 // interval in ticks
-const MONO_CONSULT_INTERVAL = 600;
+const MONO_Counsel_INTERVAL = 600;
 
 watch(
   () => emoLevelStore.tick,
   (tick) => {
     if (
       tick !== undefined &&
-      tick % MONO_CONSULT_INTERVAL === 0
+      tick % MONO_Counsel_INTERVAL === 0
     ) {
-      monoConsultsStore.push(emoLevelStore);
+      monoCounselsStore.push(emoLevelStore);
     }
   },
 );
@@ -138,7 +138,7 @@ async function onChangeEmoLevelFileInputElem() {
 
     // init state
     isEmoLevelFileInputElemLocked.value = true;
-    monoConsultsStore.$reset();
+    monoCounselsStore.$reset();
 
     emoLevelStore
       .getLevels(file)
@@ -284,7 +284,7 @@ async function onChangeEmoLevelFileInputElem() {
   align-items: center;
   position: relative;
   width: 100%;
-  .mono-consult-card-list-scroller {
+  .mono-counsel-card-list-scroller {
     position: relative;
     width: 100%;
     ::-webkit-scrollbar {
@@ -299,7 +299,7 @@ async function onChangeEmoLevelFileInputElem() {
       background-color: var(--color-border-hover);
     }
   }
-  .mono-consult-card-list {
+  .mono-counsel-card-list {
     $CHAT_CARD_PADDING: 1em;
     position: relative;
     overflow-x: hidden;

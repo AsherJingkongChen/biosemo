@@ -1,2 +1,2 @@
 export * from './emoLevel';
-export * from './monoConsults';
+export * from './monoConsuels';

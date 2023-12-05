@@ -1,10 +1,10 @@
 <template>
-  <div class="mono-consult-card-item">
+  <div class="mono-counsel-card-item">
     <EmoLevelRibbon
       class="emo-level-ribbon"
       :percent="percent" />
     <div
-      class="mono-consult-text"
+      class="mono-counsel-text"
       v-html="markedText"></div>
   </div>
 </template>
@@ -30,7 +30,7 @@ const markedText = computed(() => {
 <style scoped lang="scss">
 @import '@/assets/base.scss';
 
-.mono-consult-card-item {
+.mono-counsel-card-item {
   display: flex;
   flex-direction: row;
   gap: 1em;
@@ -49,7 +49,7 @@ const markedText = computed(() => {
       var(--color-background-soft) 10em
     );
   }
-  .mono-consult-text {
+  .mono-counsel-text {
     position: relative;
     word-break: break-word;
     // white-space: pre-wrap;

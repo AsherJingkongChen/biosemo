@@ -175,7 +175,7 @@ class StressLevelsRequest(BaseModel):
     min_items=60,
   )
 
-class StressMonoConsultRequest(BaseModel):
+class StressMonoCounselRequest(BaseModel):
   percent: int = Field(
     examples=[random.randint(0, 100)],
     ge=0, le=100,
@@ -236,10 +236,10 @@ async def stress_levels(rq: StressLevelsRequest):
   )
 
 @api.post(
-  path=f'/api/stress/consult/mono',
+  path=f'/api/stress/counsel/mono',
   response_class=StreamingResponse,
 )
-async def stress_mono_consult(rq: StressMonoConsultRequest):
+async def stress_mono_counsel(rq: StressMonoCounselRequest):
   async def _iter_openai_chat():
     client = OpenAI()
     response = client.chat.completions.create(

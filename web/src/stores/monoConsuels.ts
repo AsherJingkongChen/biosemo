@@ -14,8 +14,8 @@ const defaultState = () => ({
   _running: false,
 });
 
-export const useMonoConsultsStore = defineStore(
-  'monoConsultsStore',
+export const useMonoCounselsStore = defineStore(
+  'monoCounselsStore',
   {
     state: defaultState,
     getters: {
@@ -37,7 +37,7 @@ export const useMonoConsultsStore = defineStore(
 
         // fetch API
         const response = await fetchUtil(
-          `/${category}/consult/mono`,
+          `/${category}/counsel/mono`,
           JSON.stringify({
             percent,
           }),
