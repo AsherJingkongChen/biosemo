@@ -5,7 +5,9 @@ export function useAutoScrollDown() {
   let hadScrolledToBottom = true;
   const hasScrolledToBottom = (target: Element): boolean => {
     return (
-      target.clientHeight + target.clientTop + target.scrollTop >
+      target.clientHeight +
+        target.clientTop +
+        target.scrollTop >=
       target.scrollHeight
     );
   };

@@ -21,6 +21,7 @@
 1. Install Python 3
 2. Install Jupyter: `pip install jupyterlab`
 3. Install Python packages: Run with `python3 notebooks/deploy.py` (Should crash in the first time because newly installed packages may not be cached immediately)
+4. Set `OPENAI_API_KEY` as an environment variable
 
 ### Deployment
 

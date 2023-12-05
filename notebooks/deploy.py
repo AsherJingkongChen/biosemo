@@ -70,9 +70,9 @@ pd.set_option('display.max_columns', 128)
 # %%
 # greeting
 def greeting():
-  api_playground_url = f'http://{API_HOST}:{API_PORT}/api/playground'
+  api_docs_url = f'http://{API_HOST}:{API_PORT}/api/docs'
   display_html(
-    f'<b>See API Playground in <a href="{api_playground_url}">{api_playground_url}</a></b>',
+    f'<b>See API Playground in <a href="{api_docs_url}">{api_docs_url}</a></b>',
     raw=True
   )
 
@@ -90,12 +90,9 @@ DATA = {
 }
 
 for data_name in DATA.keys():
-  abs_data_path = (
-    Path(__file__).parent
-      .joinpath(DATA_DIR)
-      .joinpath(data_name)
-  )
   rel_data_path = Path(DATA_DIR).joinpath(data_name)
+  abs_data_path = Path(__file__).parent.joinpath(rel_data_path)
+
   # extract the compressed data files
   ZipFile(abs_data_path.with_suffix('.zip'), 'r').extract(
     str(rel_data_path.with_suffix('.csv')), '..'
@@ -150,6 +147,7 @@ from asyncio import sleep
 from dotenv import load_dotenv
 from fastapi import FastAPI, status
 from fastapi.responses import RedirectResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from more_itertools import ichunked
 from openai import OpenAI
 import numpy as np
@@ -161,9 +159,10 @@ import utils.hrv_feature_extraction as hfe
 # define constants
 
 SAMPLE_WINDOW_SIZE = 400
-INFERENCE_WINDOW_SIZE = 500
+INFERENCE_WINDOW_SIZE = 100
 INFERENCE_DELAY_IN_SECONDS = 0.005
-CHATBOT_DELAY_IN_SECONDS = 0.001
+CHATBOT_DELAY_IN_SECONDS = 0.000
+
 random.seed(123)
 load_dotenv()
 
@@ -187,17 +186,15 @@ class StressMonoCounselRequest(BaseModel):
     ge=0, le=100,
   )
 
-# define features
+# define services
 
-api = FastAPI(
-  docs_url='/api/playground',
-  redoc_url='/api/docs',
-  openapi_url='/api/openapi.json',
-  swagger_ui_oauth2_redirect_url='/api/playground/oauth2-redirect',
-)
+app = FastAPI(docs_url=None, redoc_url=None)
+api = FastAPI(root_path='/api')
+
+# define API features
 
 @api.post(
-  path=f'/api/stress/levels',
+  path='/stress/levels',
   response_class=StreamingResponse,
 )
 async def stress_levels(rq: StressLevelsRequest):
@@ -242,12 +239,12 @@ async def stress_levels(rq: StressLevelsRequest):
   )
 
 @api.post(
-  path=f'/api/stress/counsel/mono',
+  path='/stress/counsel/mono',
   response_class=StreamingResponse,
 )
 async def stress_mono_counsel(rq: StressMonoCounselRequest):
   async def _iter_openai_chat():
-    LANG = 'zh-TW, 繁體中文'
+    LANG = 'zh-TW, 繁體, 台灣, 華語'
 
     # normalize data
     high_percent = rq.high_percent // 5 * 5
@@ -271,14 +268,14 @@ Your important task is to give heart-warming and careful suggestions to the user
 
 The statistics include:
 1. The stress level in percentage.
-2. The stressful time proportion.
+2. The stressful condition proportion.
 
 Remember the guidelines:
 1. Elaborate your speech and answer in a few of short words and phrases.
-2. Forget the statistics when talk to the user, just don't mention them.
+2. Do not mention any number or statistic.
 3. Do not tell the user to keep in mind that you are not an AI language model and not a substitute to therapy.
    This is important because the user will feel bad and even annoyed that they aren't getting actual help.
-4. Warn the user if the stressful time proportion is very high (greater than 80%).
+4. Warn the user if the stressful condition proportion is very often (greater than 80%).
 
 Finally, you have to follow the guidelines and give suggestions to the user.''',
         },
@@ -324,13 +321,36 @@ My stress level is {percent}%,\
   status_code=status.HTTP_307_TEMPORARY_REDIRECT,
   response_class=RedirectResponse,
 )
-async def entry():
-  # temporary redirect to API Playground
+async def redir_api_entry_to_docs_1():
   return RedirectResponse(
-    url='/api/playground',
+    url='/api/docs',
     status_code=status.HTTP_307_TEMPORARY_REDIRECT,
   )
 
+@app.get(
+  path='/api',
+  status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+  response_class=RedirectResponse,
+)
+async def redir_api_entry_to_docs_2():
+  return RedirectResponse(
+    url='/api/docs',
+    status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+  )
+
+# serve API
+app.mount(path='/api', app=api)
+
+# serve static files
+app.mount(
+  path='/',
+  app=StaticFiles(
+    directory=(
+      Path(__file__).parent.joinpath('../web/dist')
+    ),
+    html=True,
+  ),
+)
 
 # %%
 # run the API services
@@ -342,7 +362,7 @@ nest_asyncio.apply()
 greeting()
 
 Server(Config(
-  app=api,
+  app=app,
   host=API_HOST,
   port=API_PORT,
   loop='asyncio',
