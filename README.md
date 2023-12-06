@@ -45,6 +45,9 @@ Run with `bun run dev` or `bun run build`.
 
 The URL is [http://localhost:8081](http://localhost:8081)
 
+Note: It is OK to run development and production server at the same time.
+Big thanks to Vue's `.env` file.
+
 ## Documentations
 
 - Algorithms: link | [連結](./docs/markdown/algorithms/zh-TW.md)

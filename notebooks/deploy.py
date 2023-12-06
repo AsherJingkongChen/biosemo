@@ -161,8 +161,8 @@ import utils.hrv_feature_extraction as hfe
 
 SAMPLE_WINDOW_SIZE = 400
 INFERENCE_WINDOW_SIZE = 1000
-INFERENCE_DELAY_IN_SECONDS = 0.0050
-CHATBOT_DELAY_IN_SECONDS = 0.0025
+INFERENCE_DELAY_IN_SECONDS = 0.005
+CHATBOT_DELAY_IN_SECONDS = 0.001
 
 random.seed(123)
 load_dotenv()
@@ -250,7 +250,7 @@ async def stress_mono_counsel(rq: StressMonoCounselRequest):
     # normalize data
     high_percent = rq.high_percent // 5 * 5
     percent = rq.percent // 5 * 5
-    print(rq, file=sys.stderr)
+    print('stress_mono_counsel: ', rq, file=sys.stderr)
 
     # fetch OpenAI API
     client = OpenAI()

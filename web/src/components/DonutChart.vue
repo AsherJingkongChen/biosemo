@@ -28,7 +28,7 @@ const props = defineProps<{
 
 const X = 100;
 const X_2 = X / 2;
-const X_APPROX = 99.9999;
+const X_APPROX = 99.9995;
 
 const r = computed(() => X - props.strokeWidthPercent);
 const y = computed(() => X - r.value);
