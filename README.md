@@ -30,6 +30,8 @@
 
 Run with `python3 notebooks/deploy.py` and open the web app in your browser. Link: [http://localhost:8080](http://localhost:8080)
 
+You can find some test data for Web app at [./datasets/swell/final/web-SIT/](./datasets/swell/final/web-SIT/). Upload them via GUI and have fun!
+
 ### Reproduce the experiments
 
 Open your Jupyter environment and run them in this order:
@@ -37,7 +39,7 @@ Open your Jupyter environment and run them in this order:
 1. `notebooks/preprocess.ipynb`
 2. `notebooks/analyze.ipynb`
 
-### Web development
+### Web app development
 
 Run with `bun run dev` or `bun run build`.
 
