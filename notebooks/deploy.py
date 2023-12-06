@@ -159,9 +159,9 @@ import utils.hrv_feature_extraction as hfe
 # define constants
 
 SAMPLE_WINDOW_SIZE = 400
-INFERENCE_WINDOW_SIZE = 100
-INFERENCE_DELAY_IN_SECONDS = 0.005
-CHATBOT_DELAY_IN_SECONDS = 0.000
+INFERENCE_WINDOW_SIZE = 1000
+INFERENCE_DELAY_IN_SECONDS = 0.0050
+CHATBOT_DELAY_IN_SECONDS = 0.0025
 
 random.seed(123)
 load_dotenv()
@@ -189,7 +189,7 @@ class StressMonoCounselRequest(BaseModel):
 # define services
 
 app = FastAPI(docs_url=None, redoc_url=None)
-api = FastAPI(root_path='/api')
+api = FastAPI()
 
 # define API features
 
@@ -321,7 +321,7 @@ My stress level is {percent}%,\
   status_code=status.HTTP_307_TEMPORARY_REDIRECT,
   response_class=RedirectResponse,
 )
-async def redir_api_entry_to_docs_1():
+async def redirect_api_entry_to_docs():
   return RedirectResponse(
     url='/api/docs',
     status_code=status.HTTP_307_TEMPORARY_REDIRECT,
@@ -332,7 +332,7 @@ async def redir_api_entry_to_docs_1():
   status_code=status.HTTP_307_TEMPORARY_REDIRECT,
   response_class=RedirectResponse,
 )
-async def redir_api_entry_to_docs_2():
+async def redirect_api_entry_without_slash_to_docs():
   return RedirectResponse(
     url='/api/docs',
     status_code=status.HTTP_307_TEMPORARY_REDIRECT,
