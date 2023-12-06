@@ -14,7 +14,7 @@
 ![Design: ]()
 ![Design: ]() -->
 
-## Workflow
+## Workflows
 
 ### Preparation
 
@@ -22,6 +22,9 @@
 2. Install Jupyter: `pip install jupyterlab`
 3. Install Python packages: Run with `python3 notebooks/deploy.py` (Should crash in the first time because newly installed packages may not be cached immediately)
 4. Set `OPENAI_API_KEY` as an environment variable
+
+**Optional**
+5. Install bun (A fast all-in-one JavaScript runtime)
 
 ### Deployment
 
@@ -34,7 +37,14 @@ Open your Jupyter environment and run them in this order:
 1. `notebooks/preprocess.ipynb`
 2. `notebooks/analyze.ipynb`
 
+### Web development
+
+Run with `bun run dev` or `bun run build`.
+
+The URL is [http://localhost:8081](http://localhost:8081)
+
 ## Documentations
+
 - Algorithms: link | [連結](./docs/markdown/algorithms/zh-TW.md)
 - Frameworks: [link](./docs/markdown/frameworks/en-US.md) | [連結](./docs/markdown/frameworks/zh-TW.md)
 - Dataflow: link | [連結](./docs/markdown/dataflow/zh-TW.md)

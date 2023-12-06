@@ -6,6 +6,7 @@ Usage: python3 deploy.py [-v|--verbose] [-q|--quiet]
 # %%
 # global parameters
 DATA_DIR = '../datasets/swell/final'
+WEB_DIR = '../web/app'
 TEST_DATA_NAME = 'test'
 API_HOST = 'localhost'
 API_PORT = 8080
@@ -346,7 +347,7 @@ app.mount(
   path='/',
   app=StaticFiles(
     directory=(
-      Path(__file__).parent.joinpath('../web/dist')
+      Path(__file__).parent.joinpath(WEB_DIR)
     ),
     html=True,
   ),

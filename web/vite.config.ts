@@ -8,6 +8,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 export default defineConfig({
   build: {
     assetsDir: 'assets',
+    outDir: 'app',
   },
   envPrefix: 'VUE_APP_',
   plugins: [vue(), vueJsx()],
