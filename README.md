@@ -1,8 +1,8 @@
 # BiosEmo - An Interest Project: Emotion Classification based on Biosignal data
 
 ### Demo
-- [en-US Video](./docs/videos/en-US-demo.mp4)
-- [zh-TW Video](./docs/videos/zh-TW-demo.prodcution.mp4)
+- [en-US Video](https://github.com/AsherJingkongChen/biosemo/assets/37398747/bafc6e94-ff73-4ee5-b14e-f74b8e58952b) <!-- ./docs/videos/en-US-demo.mp4 -->
+- [zh-TW Video](https://github.com/AsherJingkongChen/biosemo/assets/37398747/156c3308-3172-4a9a-a0bb-38eff64f9322) <!-- ./docs/videos/zh-TW-demo.prodcution.mp4 -->
 
 ### Preparation
 
