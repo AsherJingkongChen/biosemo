@@ -1,4 +1,4 @@
-# Individual Project: Emotion Classification based on Biosignal data
+# BiosEmo - An Interest Project: Emotion Classification based on Biosignal data
 
 ### Demo
 - [en-US Video](./docs/videos/en-US-demo.mp4)
