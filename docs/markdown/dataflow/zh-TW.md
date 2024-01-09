@@ -1,3 +1,5 @@
+![Workflow](../../images/workflow.png)
+
 `preprocess.ipynb` 是一個數據處理和轉換的流程，針對心率變異性（HRV）的原始數據進行預處理和特徵提取：
 
 1. **環境設置：**

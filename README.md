@@ -1,20 +1,8 @@
 # Individual Project: Emotion Classification based on Biosignal data
 
-<!-- ## Gallery
-
-![Web: ]()
-![Web: ]()
-![Web: ]()
-
-![Notebook: ]()
-![Notebook: ]()
-![Notebook: ]()
-
-![Design: ]()
-![Design: ]()
-![Design: ]() -->
-
-## Workflows
+### Demo
+- [en-US Video](./docs/videos/en-US-demo.mp4)
+- [zh-TW Video](./docs/videos/zh-TW-demo.prodcution.mp4)
 
 ### Preparation
 
@@ -50,11 +38,10 @@ Big thanks to Vue's `.env` file.
 
 ## Documentations
 
-- Algorithms: link | [連結](./docs/markdown/algorithms/zh-TW.md)
+- Algorithms: [link](/docs/markdown/algorithms/en-US.md) | [連結](./docs/markdown/algorithms/zh-TW.md)
 - Frameworks: [link](./docs/markdown/frameworks/en-US.md) | [連結](./docs/markdown/frameworks/zh-TW.md)
-- Dataflow: link | [連結](./docs/markdown/dataflow/zh-TW.md)
-- Designs: link | 連結
-- Workspace: link | [連結](./docs/markdown/workspace/zh-TW.md)
+- Dataflow: [link](./docs/markdown/dataflow/en-US.md) | [連結](./docs/markdown/dataflow/zh-TW.md)
+- Workspace: [link](./docs/markdown/workspace/en-US.md) | [連結](./docs/markdown/workspace/zh-TW.md)
 
 ## Datasets
 

@@ -162,7 +162,7 @@ import utils.hrv_feature_extraction as hfe
 SAMPLE_WINDOW_SIZE = 400
 INFERENCE_WINDOW_SIZE = 1000
 INFERENCE_DELAY_IN_SECONDS = 0.005
-CHATBOT_DELAY_IN_SECONDS = 0.001
+CHATBOT_DELAY_IN_SECONDS = 0.003
 
 random.seed(123)
 load_dotenv()
@@ -245,7 +245,8 @@ async def stress_levels(rq: StressLevelsRequest):
 )
 async def stress_mono_counsel(rq: StressMonoCounselRequest):
   async def _iter_openai_chat():
-    LANG = 'zh-TW, 繁體, 台灣, 華語'
+    # LANG = 'zh-TW, 繁體, 台灣, 華語'
+    LANG = 'en, English, en-US'
 
     # normalize data
     high_percent = rq.high_percent // 5 * 5
